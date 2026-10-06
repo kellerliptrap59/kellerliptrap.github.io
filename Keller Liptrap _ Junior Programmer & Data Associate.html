@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Keller Liptrap | Junior Programmer & Data Associate</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF2F4;--surface:#FFFFFF;--ink:#102A43;--muted:#52667A;--line:#CBD5DD;--accent:#0B7285;--accent-soft:#D6EEF2;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1A24;--surface:#152635;--ink:#E6EEF3;--muted:#9DB0BF;--line:#2A3F51;--accent:#4FC3D6;--accent-soft:#16384A}}
+:root[data-theme="dark"]{--bg:#0E1A24;--surface:#152635;--ink:#E6EEF3;--muted:#9DB0BF;--line:#2A3F51;--accent:#4FC3D6;--accent-soft:#16384A}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*,*:before,*:after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 "IBM Plex Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;line-height:1.1;margin:0}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.wrap{max-width:960px;margin:0 auto;padding:0 24px}
+nav{display:flex;gap:24px;flex-wrap:wrap;justify-content:flex-end;padding:20px 0;font-weight:500}
+nav a{color:var(--ink);text-decoration:none}
+nav a:hover{color:var(--accent)}
+.hero{padding:56px 0 72px}
+.hero h1{font-size:clamp(3.2rem,11vw,7.5rem);font-weight:800;letter-spacing:-.03em}
+.hero .role{font-size:clamp(1.2rem,3vw,1.6rem);margin:20px 0 0;color:var(--muted);max-width:34ch}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+.btn{display:inline-block;padding:12px 22px;border-radius:6px;font:500 1rem "IBM Plex Sans",sans-serif;text-decoration:none;cursor:pointer;border:2px solid var(--accent)}
+.btn.primary{background:var(--accent);color:var(--bg)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:56px;border-top:2px solid var(--ink)}
+.facts div{padding:16px 16px 0 0}
+.facts b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:1.15rem}
+.facts span{color:var(--muted);font-size:.95rem}
+section{padding:64px 0;border-top:1px solid var(--line)}
+section>.wrap>h2{font-size:clamp(2rem,5vw,3rem);font-weight:700;margin-bottom:32px;letter-spacing:-.02em}
+.job{display:grid;grid-template-columns:200px 1fr;gap:8px 32px;padding:24px 0;border-bottom:1px solid var(--line)}
+.job:last-child{border-bottom:0}
+.job .when{color:var(--muted);font-size:.95rem}
+.job h3{font-size:1.35rem;font-weight:700}
+.job .org{color:var(--accent);font-weight:500;margin:2px 0 10px}
+.job ul{margin:0;padding-left:20px}
+.job li{margin:4px 0;max-width:62ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:24px;display:flex;flex-direction:column}
+.card:first-child{grid-column:1/-1;border-left:6px solid var(--accent)}
+.card h3{font-size:1.3rem;font-weight:700;margin-bottom:8px}
+.card p{margin:0 0 16px;color:var(--muted);flex:1}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;padding:0;list-style:none}
+.tags li{background:var(--accent-soft);color:var(--ink);padding:3px 10px;border-radius:99px;font-size:.85rem}
+.card a{font-weight:500}
+.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:32px}
+.skills h3{font-size:1.1rem;margin-bottom:10px}
+.skills ul{margin:0;padding:0;list-style:none}
+.skills li{padding:6px 0;border-bottom:1px solid var(--line)}
+.edu{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:12px 0}
+#contact p{max-width:52ch;margin:0 0 24px}
+footer{padding:32px 0 48px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+@media (max-width:640px){.job{grid-template-columns:1fr}nav{justify-content:flex-start}}
+@media print{nav,.cta,footer{display:none}section{padding:24px 0}body{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <nav aria-label="Main">
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#resume">Resume</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main>
+<div class="wrap hero">
+  <h1>Keller Liptrap</h1>
+  <p class="role">Junior programmer and data associate. I build survey systems, data pipelines and prediction models.</p>
+  <div class="cta">
+    <a class="btn primary" href="#projects">See my projects</a>
+    <a class="btn ghost" href="#contact">Get in touch</a>
+  </div>
+  <div class="facts">
+    <div><b>Opinions LTD</b><span>Junior Programmer / Data Associate</span></div>
+    <div><b>Allegheny College</b><span>B.S. Computer Science, 2025</span></div>
+    <div><b>Bay Village, Ohio</b><span>SQL, Python, JavaScript</span></div>
+  </div>
+</div>
+
+<section id="experience">
+  <div class="wrap">
+    <h2>Experience</h2>
+    <article class="job"><div class="when">Aug 2026 to present</div><div>
+      <h3>Junior Programmer / Data Associate</h3><div class="org">Opinions LTD</div>
+      <ul>
+        <li>Develop and test online surveys with branching, quotas, rotations, validation and respondent routing.</li>
+        <li>Use SQL, Excel and JavaScript to analyze participant data, determine eligibility and build data collection workflows.</li>
+        <li>Work with research and programming teams to turn business requirements into working survey systems, and troubleshoot data and logic issues.</li>
+      </ul></div></article>
+    <article class="job"><div class="when">Nov 2025 to present</div><div>
+      <h3>Offensive Coordinator</h3><div class="org">Magnificat High School Girls Flag Football</div>
+      <ul>
+        <li>Lead practice planning, play design and game strategy.</li>
+        <li>Coach quarterbacks and skill players on routes, decision-making and mechanics.</li>
+      </ul></div></article>
+    <article class="job"><div class="when">Jun 2025 to Aug 2026</div><div>
+      <h3>Golf Associate / Club Technician</h3><div class="org">Golf Galaxy &amp; Dick's Sporting Goods</div>
+      <ul>
+        <li>Recommended clubs and equipment based on player needs, and performed club fittings.</li>
+        <li>Repaired clubs and helped customers choose shafts, grips and components.</li>
+      </ul></div></article>
+    <article class="job"><div class="when">Jun to Aug 2024</div><div>
+      <h3>Software / Data Intern</h3><div class="org">Dover Corporation &amp; Modgility</div>
+      <ul>
+        <li>Wrote Python scripts that automated customer data extraction from emails, cutting manual entry by 60%.</li>
+        <li>Integrated a third-party REST API into internal tools.</li>
+        <li>Improved unit test coverage with a senior developer.</li>
+        <li>Built formulas in proposal software to automate labor and material cost calculations.</li>
+      </ul></div></article>
+    <article class="job"><div class="when">Jun to Aug 2023</div><div>
+      <h3>Website Development Intern</h3><div class="org">Modgility</div>
+      <ul>
+        <li>Helped consolidate multiple websites into one platform, improving performance and maintainability.</li>
+        <li>Contributed design improvements that increased site performance by 50%.</li>
+        <li>Took part in Agile sprint planning and development meetings.</li>
+      </ul></div></article>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <h2>Projects</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Never Tell Me The Odds: NBA Prediction Web App</h3>
+        <p>A machine learning web app that predicts NBA game outcomes with over 60% accuracy using historical team and player data. I built the full pipeline: data collection, preprocessing, model training and deployment with Flask. I used regression and classification models and tuned them with cross-validation and feature engineering.</p>
+        <ul class="tags"><li>Python</li><li>Flask</li><li>Scikit-learn</li><li>HTML</li></ul>
+        <a href="#">View on GitHub</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <h2>Skills</h2>
+    <div class="skills">
+      <div><h3>Data and analytics</h3><ul><li>SQL, Python, R, Excel</li><li>Pandas, NumPy, Matplotlib</li><li>Data visualization, statistical analysis</li></ul></div>
+      <div><h3>Programming</h3><ul><li>Python, JavaScript, HTML</li><li>REST APIs</li><li>Git, Flask</li></ul></div>
+      <div><h3>Business intelligence</h3><ul><li>Data reporting and analysis</li><li>Database management</li><li>Survey analytics (Alchemer)</li></ul></div>
+      <div><h3>Machine learning</h3><ul><li>Regression, classification</li><li>Feature engineering</li><li>Model evaluation</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="resume">
+  <div class="wrap">
+    <h2>Resume</h2>
+    <button class="btn primary" onclick="window.print()">Print or save as PDF</button>
+    <h3 style="margin-top:40px;font-size:1.3rem">Education</h3>
+    <div class="edu"><span><b>B.S. Computer Science, Minor in Psychology</b>, Allegheny College, Meadville, PA</span><span>May 2025, GPA 3.47</span></div>
+    <h3 style="margin-top:32px;font-size:1.3rem">Leadership and honors</h3>
+    <div class="edu"><span><b>Technical Leader</b>, Allegheny College: tutored students in programming, algorithms and data structures</span><span>Aug to Dec 2024</span></div>
+    <div class="edu"><span><b>Allegheny College Football</b>: 4-year starter, Leadership Council</span><span>2022 to 2024</span></div>
+    <div class="edu"><span><b>Honors</b>: PAC Honor Roll, NFF Hampshire Honor Society</span><span>2023 to 2025</span></div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <h2>Contact</h2>
+    <p>I'm open to programming and data roles. Email is the fastest way to reach me.</p>
+    <a class="btn primary" href="mailto:kjliptrap@gmail.com">kjliptrap@gmail.com</a>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">Keller Liptrap</div></footer>
+</body>
+</html>
