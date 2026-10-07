@@ -4,61 +4,84 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Keller Liptrap | Junior Programmer & Data Associate</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#EEF2F4;--surface:#FFFFFF;--ink:#102A43;--muted:#52667A;--line:#CBD5DD;--accent:#0B7285;--accent-soft:#D6EEF2;
+:root{--bg:#F3F5F2;--surface:#FFFFFF;--ink:#0D1B2A;--muted:#4F5F6B;--line:#D3DAD5;--accent:#0F5C45;--on-accent:#FFFFFF;--accent-soft:#DDEEE6;--turf:#0F4C3A;--gold:#F2B705;--chalk:#FFFFFF;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1A24;--surface:#152635;--ink:#E6EEF3;--muted:#9DB0BF;--line:#2A3F51;--accent:#4FC3D6;--accent-soft:#16384A}}
-:root[data-theme="dark"]{--bg:#0E1A24;--surface:#152635;--ink:#E6EEF3;--muted:#9DB0BF;--line:#2A3F51;--accent:#4FC3D6;--accent-soft:#16384A}
-html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1613;--surface:#14231E;--ink:#E8F0EC;--muted:#9BB0A6;--line:#26403A;--accent:#5FD3A0;--on-accent:#06251B;--accent-soft:#16372D;--turf:#0A2E24}}
+:root[data-theme="dark"]{--bg:#0C1613;--surface:#14231E;--ink:#E8F0EC;--muted:#9BB0A6;--line:#26403A;--accent:#5FD3A0;--on-accent:#06251B;--accent-soft:#16372D;--turf:#0A2E24}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 *,*:before,*:after{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 "IBM Plex Sans",system-ui,sans-serif}
-h1,h2,h3{font-family:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;line-height:1.1;margin:0}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",Arial,sans-serif;line-height:1;margin:0}
 a{color:var(--accent)}
-a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
 .wrap{max-width:960px;margin:0 auto;padding:0 24px}
+
+/* Hero: the turf */
+.top{background:var(--turf);color:var(--chalk);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 2px,transparent 2px 96px)}
 nav{display:flex;gap:24px;flex-wrap:wrap;justify-content:flex-end;padding:20px 0;font-weight:500}
-nav a{color:var(--ink);text-decoration:none}
-nav a:hover{color:var(--accent)}
-.hero{padding:56px 0 72px}
-.hero h1{font-size:clamp(3.2rem,11vw,7.5rem);font-weight:800;letter-spacing:-.03em}
-.hero .role{font-size:clamp(1.2rem,3vw,1.6rem);margin:20px 0 0;color:var(--muted);max-width:34ch}
-.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+nav a{color:var(--chalk);text-decoration:none;opacity:.9}
+nav a:hover{opacity:1;color:var(--gold)}
+.hero{padding:40px 0 56px}
+.hero h1{font-size:clamp(4rem,15vw,9.5rem);font-weight:800;letter-spacing:-.01em;text-transform:uppercase}
+.hero .role{font-size:clamp(1.15rem,2.6vw,1.45rem);margin:20px 0 0;max-width:36ch;font-weight:500}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
 .btn{display:inline-block;padding:12px 22px;border-radius:6px;font:500 1rem "IBM Plex Sans",sans-serif;text-decoration:none;cursor:pointer;border:2px solid var(--accent)}
-.btn.primary{background:var(--accent);color:var(--bg)}
-.btn.ghost{background:transparent;color:var(--accent)}
-.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:56px;border-top:2px solid var(--ink)}
-.facts div{padding:16px 16px 0 0}
-.facts b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:1.15rem}
-.facts span{color:var(--muted);font-size:.95rem}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.top .btn.primary{background:var(--gold);border-color:var(--gold);color:#1B1500}
+.top .btn.ghost{background:transparent;border-color:var(--chalk);color:var(--chalk)}
+.top .btn:hover{filter:brightness(1.08)}
+
+/* Quick facts */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:56px;border-top:3px solid var(--gold)}
+.facts div{padding:18px 16px 0 0}
+.facts b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:2rem;line-height:1.05;font-weight:700;color:var(--gold)}
+.facts span{display:block;margin-top:6px;color:rgba(255,255,255,.88);font-size:.95rem}
+
+/* Sections */
 section{padding:64px 0;border-top:1px solid var(--line)}
-section>.wrap>h2{font-size:clamp(2rem,5vw,3rem);font-weight:700;margin-bottom:32px;letter-spacing:-.02em}
+.top+main>section:first-child{border-top:0}
+section>.wrap>h2{font-size:clamp(2.4rem,6vw,3.6rem);font-weight:700;margin-bottom:32px;text-transform:uppercase;display:inline-block;padding-bottom:10px;border-bottom:4px solid var(--gold)}
 .job{display:grid;grid-template-columns:200px 1fr;gap:8px 32px;padding:24px 0;border-bottom:1px solid var(--line)}
 .job:last-child{border-bottom:0}
 .job .when{color:var(--muted);font-size:.95rem}
-.job h3{font-size:1.35rem;font-weight:700}
-.job .org{color:var(--accent);font-weight:500;margin:2px 0 10px}
+.job h3{font-size:1.7rem;font-weight:700}
+.job .org{color:var(--accent);font-weight:500;margin:4px 0 10px}
 .job ul{margin:0;padding-left:20px}
 .job li{margin:4px 0;max-width:62ch}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
-.card{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:10px;padding:24px;display:flex;flex-direction:column;grid-column:1/-1}
-.card h3{font-size:1.3rem;font-weight:700;margin-bottom:8px}
+.job.current .when{color:var(--ink);font-weight:500}
+.job.current .when:before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--gold);margin-right:8px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--gold);border-radius:10px;padding:24px;display:flex;flex-direction:column}
+.card h3{font-size:1.6rem;font-weight:700;margin-bottom:10px}
 .card p{margin:0 0 16px;color:var(--muted);flex:1}
 .tags{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;padding:0;list-style:none}
 .tags li{background:var(--accent-soft);color:var(--ink);padding:3px 10px;border-radius:99px;font-size:.85rem}
 .card a{font-weight:500}
+
 .skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:32px}
-.skills h3{font-size:1.1rem;margin-bottom:10px}
+.skills h3{font-size:1.4rem;margin-bottom:10px;color:var(--accent)}
 .skills ul{margin:0;padding:0;list-style:none}
 .skills li{padding:6px 0;border-bottom:1px solid var(--line)}
 .edu{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:12px 0}
+.sub{margin-top:40px;font-size:1.6rem;font-weight:700}
+
+/* Contact band */
+#contact{background:var(--turf);color:var(--chalk);border-top:0;background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 2px,transparent 2px 96px)}
+#contact>.wrap>h2{color:var(--chalk)}
 #contact p{max-width:52ch;margin:0 0 24px}
-footer{padding:32px 0 48px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+#contact .btn.primary{background:var(--gold);border-color:var(--gold);color:#1B1500}
+footer{padding:28px 0 40px;color:var(--muted);font-size:.9rem}
 @media (max-width:640px){.job{grid-template-columns:1fr}nav{justify-content:flex-start}}
-@media print{nav,.cta,footer{display:none}section{padding:24px 0}body{background:#fff;color:#000}}
+@media print{nav,.cta,footer{display:none}section{padding:24px 0}body{background:#fff;color:#000}.top,#contact{background:#fff;color:#000}.facts b{color:#000}.facts span{color:#000}}
 </style>
 </head>
 <body>
+<div class="top">
 <header class="wrap">
   <nav aria-label="Main">
     <a href="#experience">Experience</a>
@@ -68,8 +91,6 @@ footer{padding:32px 0 48px;color:var(--muted);font-size:.9rem;border-top:1px sol
     <a href="#contact">Contact</a>
   </nav>
 </header>
-
-<main>
 <div class="wrap hero">
   <h1>Keller Liptrap</h1>
   <p class="role">Junior Programmer & Data Associate, Opinions Ltd. – Chagrin Falls, OH</p>
@@ -83,18 +104,20 @@ footer{padding:32px 0 48px;color:var(--muted);font-size:.9rem;border-top:1px sol
     <div><b>Bay Village, Ohio</b><span>Excel, SQL, Python</span></div>
   </div>
 </div>
+</div>
 
+<main>
 <section id="experience">
   <div class="wrap">
     <h2>Experience</h2>
-    <article class="job"><div class="when">Aug 2026 to present</div><div>
+    <article class="job current"><div class="when">Aug 2026 to present</div><div>
       <h3>Junior Programmer / Data Associate</h3><div class="org">Opinions LTD</div>
       <ul>
         <li>Develop and test online surveys with branching, quotas, rotations, validation and respondent routing.</li>
         <li>Use SQL, Excel and JavaScript to analyze participant data, determine eligibility and build data collection workflows.</li>
         <li>Work with research and programming teams to turn business requirements into working survey systems, and troubleshoot data and logic issues.</li>
       </ul></div></article>
-    <article class="job"><div class="when">Nov 2025 to present</div><div>
+    <article class="job current"><div class="when">Nov 2025 to present</div><div>
       <h3>Offensive Coordinator</h3><div class="org">Magnificat High School Girls Flag Football</div>
       <ul>
         <li>Lead practice planning, play design and game strategy.</li>
@@ -160,10 +183,10 @@ footer{padding:32px 0 48px;color:var(--muted);font-size:.9rem;border-top:1px sol
 <section id="resume">
   <div class="wrap">
     <h2>Resume</h2>
-    <a class="btn primary" href="Keller%20Liptrap%20-%20Resume.docx" download>Download resume</a>
-    <h3 style="margin-top:40px;font-size:1.3rem">Education</h3>
+    <div><a class="btn primary" href="Keller%20Liptrap%20-%20Resume.docx" download>Download resume</a></div>
+    <h3 class="sub">Education</h3>
     <div class="edu"><span><b>B.S. Computer Science, Minor in Psychology</b>, Allegheny College, Meadville, PA</span><span>May 2025, GPA 3.47</span></div>
-    <h3 style="margin-top:32px;font-size:1.3rem">Leadership and honors</h3>
+    <h3 class="sub">Leadership and honors</h3>
     <div class="edu"><span><b>Technical Leader</b>, Allegheny College: tutored students in programming, algorithms and data structures</span><span>Aug to Dec 2024</span></div>
     <div class="edu"><span><b>Allegheny College Football</b>: 4-year starter, Leadership Council</span><span>2022 to 2024</span></div>
     <div class="edu"><span><b>Honors</b>: PAC Honor Roll, NFF Hampshire Honor Society</span><span>2023 to 2025</span></div>
