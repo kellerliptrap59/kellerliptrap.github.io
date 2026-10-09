@@ -135,6 +135,86 @@ ORDER BY order_count DESC;</code></pre>
       <p class="takeaway"><b>Takeaway:</b> <code>WHERE</code> filters rows before grouping, and <code>HAVING</code> filters groups after. (Sample entry for illustration.)</p>
     </article> -->
 
+    ```html
+<article class="entry" data-tool="SQL">
+  <div class="meta">
+    <time datetime="2026-10-09">Oct 9, 2026</time>
+    <span class="pill">SQL</span>
+  </div>
+
+  <h2>How Do the Cleveland Cavaliers Perform in Home and Away Wins and Losses?</h2>
+
+  <h3>The question</h3>
+  <p>
+    How do the Cleveland Cavaliers' average points, assists, rebounds,
+    and three-point shooting percentage differ between wins and losses
+    at home and on the road during the 2025–2026 NBA season?
+  </p>
+
+  <h3>The approach</h3>
+  <p>
+    I used a Common Table Expression (CTE) to isolate Cleveland Cavaliers
+    game records and classify each game as home or away based on the
+    matchup. I then grouped the games by result and location, calculating
+    the average points, assists, rebounds, and three-point shooting
+    percentage for each combination.
+  </p>
+  <p>
+    I used aggregate functions with <code>GROUP BY</code> to compare
+    performance across the four categories: home wins, home losses,
+    away wins, and away losses. I also rounded the averages to two
+    decimal places to make the results easier to interpret.
+  </p>
+
+<pre><code>WITH cavs_stats AS (
+    SELECT
+        team_name,
+        matchup,
+        TRIM(REGEXP_REPLACE(matchup, 'CLE|vs\.|@', '')) AS opponent,
+        CASE
+            WHEN matchup LIKE '% vs. %' THEN 'HOME'
+            ELSE 'AWAY'
+        END AS location,
+        wl,
+        pts,
+        ast,
+        reb,
+        fg3_pct
+    FROM nba_2025_2026_games
+    WHERE team_name = 'Cleveland Cavaliers'
+)
+SELECT
+    wl AS result,
+    location,
+    ROUND(AVG(pts), 2) AS avg_points,
+    ROUND(AVG(ast), 2) AS avg_assists,
+    ROUND(AVG(reb), 2) AS avg_rebounds,
+    ROUND(AVG(fg3_pct), 2) AS avg_3pt_percent
+FROM cavs_stats
+GROUP BY wl, location
+ORDER BY
+    FIELD(location, 'HOME', 'AWAY'),
+    FIELD(result, 'W', 'L');</code></pre>
+
+  <h3>The result</h3>
+  <p>
+    The query produces four rows summarizing the Cavaliers' average
+    performance: home wins, home losses, away wins, and away losses.
+    Each row includes points, assists, rebounds, and three-point
+    shooting percentage, allowing direct comparisons between winning
+    and losing performances at different locations.
+  </p>
+
+  <p class="takeaway">
+    <b>Takeaway:</b> By combining a CTE, conditional logic, aggregate functions, and grouping, I created a comparison of the Cavaliers' performance across home and away games. This analysis helps identify which statistical differences are associated with wins and losses and whether those patterns change depending on whether the game is played at home or away.
+
+There are several things that stood out to me when looking at this data. First, when the Cavs win, regardless of whether they play at home or away, they average nearly 10 more points than their opponents. Specifically, at home, this may be attributed to their nearly 10 percentage-point increase in three-point shooting percentage in wins compared to home losses.
+
+  </p>
+</article>
+```
+
+
   </div>
   <p class="empty" id="empty" hidden>No entries for that tool yet.</p>
 </main>
