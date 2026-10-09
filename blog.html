@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daily Data Log | Keller Liptrap</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F5F2;--surface:#FFFFFF;--ink:#0D1B2A;--muted:#4F5F6B;--line:#D3DAD5;--accent:#0F5C45;--on-accent:#FFFFFF;--accent-soft:#DDEEE6;--turf:#0F4C3A;--gold:#F2B705;--chalk:#FFFFFF;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1613;--surface:#14231E;--ink:#E8F0EC;--muted:#9BB0A6;--line:#26403A;--accent:#5FD3A0;--on-accent:#06251B;--accent-soft:#16372D;--turf:#0A2E24}}
+:root[data-theme="dark"]{--bg:#0C1613;--surface:#14231E;--ink:#E8F0EC;--muted:#9BB0A6;--line:#26403A;--accent:#5FD3A0;--on-accent:#06251B;--accent-soft:#16372D;--turf:#0A2E24}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before,*:after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 "IBM Plex Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",Arial,sans-serif;line-height:1;margin:0}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.wrap{max-width:960px;margin:0 auto;padding:0 24px}
+
+.top{background:var(--turf);color:var(--chalk);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 2px,transparent 2px 96px)}
+nav{display:flex;gap:24px;flex-wrap:wrap;justify-content:flex-end;padding:20px 0;font-weight:500}
+nav a{color:var(--chalk);text-decoration:none;opacity:.9}
+nav a:hover,nav a[aria-current="page"]{opacity:1;color:var(--gold)}
+.hero{padding:32px 0 48px}
+.hero h1{font-size:clamp(3.2rem,11vw,6.5rem);font-weight:800;text-transform:uppercase}
+.hero p{margin:16px 0 0;max-width:48ch;font-size:1.15rem;color:rgba(255,255,255,.88)}
+
+.filters{display:flex;gap:10px;flex-wrap:wrap;padding:28px 0 8px}
+.filters button{font:500 .95rem "IBM Plex Sans",sans-serif;padding:8px 16px;border-radius:99px;border:2px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+
+.entry{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--gold);border-radius:10px;padding:28px;margin:24px 0}
+.entry[hidden]{display:none}
+.meta{display:flex;gap:12px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:.95rem;margin-bottom:12px}
+.pill{background:var(--accent-soft);color:var(--ink);padding:3px 12px;border-radius:99px;font-size:.85rem;font-weight:500}
+.entry h2{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:700;margin-bottom:16px}
+.entry h3{font-size:1.25rem;font-weight:700;color:var(--accent);margin:24px 0 6px}
+.entry p{margin:0 0 12px;max-width:68ch}
+pre{margin:12px 0;padding:16px;border-radius:8px;background:#0D1B2A;color:#E6EEF3;overflow-x:auto;max-width:100%;font:400 .9rem/1.5 "IBM Plex Mono",ui-monospace,Consolas,monospace}
+code{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9em}
+p code,li code{background:var(--accent-soft);padding:1px 6px;border-radius:4px}
+.result{overflow-x:auto}
+table{border-collapse:collapse;margin:12px 0;font-size:.95rem;min-width:260px}
+th,td{border:1px solid var(--line);padding:6px 12px;text-align:left}
+th{background:var(--accent-soft)}
+.takeaway{border-left:4px solid var(--gold);padding:4px 0 4px 16px;margin-top:16px}
+.empty{color:var(--muted);padding:24px 0}
+footer{padding:28px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line);margin-top:48px}
+@media (max-width:640px){nav{justify-content:flex-start}.entry{padding:20px}}
+@media print{nav,.filters,footer{display:none}body{background:#fff;color:#000}.top{background:#fff;color:#000}.hero p{color:#000}}
+</style>
+</head>
+<body>
+<div class="top">
+<header class="wrap">
+  <nav aria-label="Main">
+    <a href="index.html">Home</a>
+    <a href="index.html#projects">Projects</a>
+    <a href="blog.html" aria-current="page">Daily Log</a>
+    <a href="index.html#contact">Contact</a>
+  </nav>
+</header>
+<div class="wrap hero">
+  <h1>Daily Data Log</h1>
+  <p>One question a day, answered with SQL, Excel, Python, or whatever tool fits the problem.</p>
+</div>
+</div>
+
+<main class="wrap">
+  <div class="filters" role="group" aria-label="Filter by tool">
+    <button type="button" data-filter="all" aria-pressed="true">All</button>
+    <button type="button" data-filter="SQL" aria-pressed="false">SQL</button>
+    <button type="button" data-filter="Excel" aria-pressed="false">Excel</button>
+    <button type="button" data-filter="Python" aria-pressed="false">Python</button>
+    <button type="button" data-filter="Other" aria-pressed="false">Other</button>
+  </div>
+
+  <!--
+  =====================================================================
+  HOW TO ADD A NEW DAY
+  1. Copy everything from <article class="entry" ...> down to </article> below.
+  2. Paste it at the TOP of the list (right under this comment) so the newest entry is first.
+  3. Change data-tool to SQL, Excel, Python, or Other (this powers the filter buttons).
+  4. Update the date, tool label, question, and text.
+  5. Put code inside <pre><code> ... </code></pre>. Write < as &lt; and & as &amp; inside code.
+  =====================================================================
+  -->
+
+  <div id="entries">
+
+    <!-- SAMPLE ENTRY (Python). Replace or delete. -->
+    <article class="entry" data-tool="Python">
+      <div class="meta"><time datetime="2026-10-09">Oct 9, 2026</time><span class="pill">Python</span></div>
+      <h2>How do I find the top 3 values in each group?</h2>
+      <h3>The question</h3>
+      <p>Given a table of sales by region, which three reps sold the most in each region?</p>
+      <h3>The approach</h3>
+      <p>Sort by sales, then use <code>groupby</code> with <code>head(3)</code> so each region keeps only its top rows.</p>
+<pre><code>import pandas as pd
+
+top3 = (
+    df.sort_values("sales", ascending=False)
+      .groupby("region")
+      .head(3)
+      .sort_values(["region", "sales"], ascending=[True, False])
+)
+print(top3)</code></pre>
+      <h3>The result</h3>
+      <div class="result"><table>
+        <tr><th>region</th><th>rep</th><th>sales</th></tr>
+        <tr><td>East</td><td>Ava</td><td>9,400</td></tr>
+        <tr><td>East</td><td>Ben</td><td>8,100</td></tr>
+        <tr><td>West</td><td>Cara</td><td>7,700</td></tr>
+      </table></div>
+      <p class="takeaway"><b>Takeaway:</b> Sorting first and then grouping is a quick way to get "top N per group" without a loop. (Sample data for illustration.)</p>
+    </article>
+
+    <!-- SAMPLE ENTRY (SQL). Replace or delete. -->
+    <article class="entry" data-tool="SQL">
+      <div class="meta"><time datetime="2026-10-08">Oct 8, 2026</time><span class="pill">SQL</span></div>
+      <h2>Which customers placed more than one order?</h2>
+      <h3>The question</h3>
+      <p>I want a list of repeat customers and how many orders each one has placed.</p>
+      <h3>The approach</h3>
+      <p>Group orders by customer, count them, and filter the groups with <code>HAVING</code>, since <code>WHERE</code> can't filter on an aggregate.</p>
+<pre><code>SELECT customer_id,
+       COUNT(*) AS order_count
+FROM orders
+GROUP BY customer_id
+HAVING COUNT(*) &gt; 1
+ORDER BY order_count DESC;</code></pre>
+      <h3>The result</h3>
+      <p>One row per repeat customer, sorted from most orders to fewest.</p>
+      <p class="takeaway"><b>Takeaway:</b> <code>WHERE</code> filters rows before grouping, and <code>HAVING</code> filters groups after. (Sample entry for illustration.)</p>
+    </article>
+
+  </div>
+  <p class="empty" id="empty" hidden>No entries for that tool yet.</p>
+</main>
+
+<footer><div class="wrap">Keller Liptrap</div></footer>
+
+<script>
+(function(){
+  var buttons=document.querySelectorAll('.filters button');
+  var entries=document.querySelectorAll('#entries .entry');
+  var empty=document.getElementById('empty');
+  buttons.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var f=btn.getAttribute('data-filter');
+      var shown=0;
+      buttons.forEach(function(b){b.setAttribute('aria-pressed',b===btn?'true':'false')});
+      entries.forEach(function(e){
+        var match=(f==='all'||e.getAttribute('data-tool')===f);
+        e.hidden=!match;
+        if(match)shown++;
+      });
+      empty.hidden=shown>0;
+    });
+  });
+})();
+</script>
+</body>
+</html>
