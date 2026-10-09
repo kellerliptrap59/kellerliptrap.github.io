@@ -1,0 +1,53 @@
+```sql
+
+CREATE TABLE total_against AS
+SELECT
+    GAME_ID,
+    TEAM_NAME,
+    CASE
+        WHEN MATCHUP LIKE '% vs. %' THEN 'HOME'
+        ELSE 'AWAY'
+    END AS location,
+
+    SUM(PTS) AS PTS,
+    SUM(FGM) AS FGM,
+    SUM(FGA) AS FGA,
+    ROUND(SUM(FGM) / NULLIF(SUM(FGA), 0), 3) AS FG_PCT,
+
+    SUM(FG3M) AS FG3M,
+    SUM(FG3A) AS FG3A,
+    ROUND(SUM(FG3M) / NULLIF(SUM(FG3A), 0), 3) AS FG3_PCT,
+
+    SUM(FTM) AS FTM,
+    SUM(FTA) AS FTA,
+    ROUND(SUM(FTM) / NULLIF(SUM(FTA), 0), 3) AS FT_PCT,
+
+    SUM(OREB) AS OREB,
+    SUM(DREB) AS DREB,
+    SUM(REB) AS REB,
+    SUM(AST) AS AST,
+    SUM(STL) AS STL,
+    SUM(BLK) AS BLK,
+    SUM(TOV) AS TOV
+
+FROM nba_2025_2026_games
+GROUP BY
+    GAME_ID,
+    TEAM_NAME,
+    CASE
+        WHEN MATCHUP LIKE '% vs. %' THEN 'HOME'
+        ELSE 'AWAY'
+    END;
+
+select t1.TEAM_NAME, 
+ROUND(AVG(t2.PTS), 2) AS AVG_POINTS_ALLOWED,
+31 -RANK() OVER (
+        ORDER BY AVG(t2.PTS) DESC
+    ) AS DEFENSIVE_RANK
+from total_against t1
+join total_against t2
+	ON t1.GAME_ID = t2.GAME_ID
+    AND t1.TEAM_NAME <> t2.TEAM_NAME
+GROUP BY t1.TEAM_NAME
+ORDER BY AVG_POINTS_ALLOWED DESC;
+```
