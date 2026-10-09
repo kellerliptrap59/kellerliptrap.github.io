@@ -138,7 +138,7 @@ ORDER BY order_count DESC;</code></pre>
 
     <article class="entry" data-tool="SQL">
       <div class="meta">
-        <time datetime="2026-10-09">Oct 9, 2026</time>
+        <time datetime="2026-10-09">Oct 8, 2026</time>
         <span class="pill">SQL</span>
       </div>
  
@@ -232,28 +232,19 @@ ORDER BY
         <span class="pill">SQL</span>
       </div>
  
-      <h2>What teams did Donavon Mitchell prefomr the best agasint in the 2025-2026 NBA regular season</h2>
+      <h2>>Which Teams Did Donovan Mitchell Perform Best Against in the 2025–2026 NBA Regular Season?</h2>
  
       <h3>The question</h3>
       <p>
-        How do the Cleveland Cavaliers' average points, assists, rebounds,
-        and three-point shooting percentage differ between wins and losses
-        at home and on the road during the 2025–2026 NBA season?
+        How did Donovan Mitchell's scoring, three-point shooting, field-goal shooting, and playing time vary against different opponents during the 2025–2026 NBA regular season?
       </p>
  
       <h3>The approach</h3>
       <p>
-        I used a Common Table Expression (CTE) to isolate Cleveland Cavaliers
-        game records and classify each game as home or away based on the
-        matchup. I then grouped the games by result and location, calculating
-        the average points, assists, rebounds, and three-point shooting
-        percentage for each combination.
+        I used a Common Table Expression (CTE) to isolate Donovan Mitchell's game-level statistics and identify each opponent from the matchup data. I joined the player box scores with the game records using the game ID and team abbreviation to match each performance to the correct game.
       </p>
       <p>
-        I used aggregate functions with <code>GROUP BY</code> to compare
-        performance across the four categories: home wins, home losses,
-        away wins, and away losses. I also rounded the averages to two
-        decimal places to make the results easier to interpret.
+        I then used aggregate functions, including <code>AVG()</code> and <code>COUNT()</code>, with <code>GROUP BY</code> to calculate his average performance and number of games against each opponent. Finally, I used <code>ORDER BY</code> to rank opponents by his average points per game.
       </p>
  
 <pre><code>with donovan_mitchell_stats as(
@@ -293,23 +284,10 @@ ORDER BY avg_points DESC;</code></pre>
  
       <h3>The result</h3>
       <p>
-        The query 
+        The query groups Donovan Mitchell's performances by opponent and ranks the results by average points per game. The table also shows how many games contributed to each average, along with his shooting statistics and playing time. 
       </p>
  
-      <!-- RESULT TABLE: numbers come from the query output. -->
-      <div class="result">
-        <table>
-          <tr>
-            <th>result</th><th>location</th>
-            <th class="num">avg_points</th><th class="num">avg_assists</th>
-            <th class="num">avg_rebounds</th><th class="num">avg_3pt_percent</th>
-          </tr>
-          <tr><td>W</td><td>HOME</td><td class="num">124.67</td><td class="num">29.11</td><td class="num">44.81</td><td class="num">0.39</td></tr>
-          <tr><td>L</td><td>HOME</td><td class="num">108.57</td><td class="num">25.07</td><td class="num">43.36</td><td class="num">0.31</td></tr>
-          <tr><td>W</td><td>AWAY</td><td class="num">123.36</td><td class="num">29.96</td><td class="num">46.12</td><td class="num">0.37</td></tr>
-          <tr><td>L</td><td>AWAY</td><td class="num">114.44</td><td class="num">27.19</td><td class="num">42.06</td><td class="num">0.34</td></tr>
-        </table>
-      </div>
+      <!-- RESULT TABLE: numbers come from the query output. --> <div class="result"> <table> <tr> <th>Player</th> <th>Opponent</th> <th class="num">Games</th> <th class="num">Avg. Points</th> <th class="num">Avg. 3PM</th> <th class="num">Avg. 3P%</th> <th class="num">Avg. FGM</th> <th class="num">Avg. FG%</th> <th class="num">Avg. Minutes</th> </tr> <tr><td>Donovan Mitchell</td><td>IND</td><td class="num">1</td><td class="num">38.00</td><td class="num">2.00</td><td class="num">0.286</td><td class="num">16.00</td><td class="num">0.59</td><td class="num">32.0</td></tr> <tr><td>Donovan Mitchell</td><td>ORL</td><td class="num">4</td><td class="num">37.00</td><td class="num">3.50</td><td class="num">0.403</td><td class="num">13.25</td><td class="num">0.53</td><td class="num">35.5</td></tr> <tr><td>Donovan Mitchell</td><td>UTA</td><td class="num">1</td><td class="num">34.00</td><td class="num">3.00</td><td class="num">0.375</td><td class="num">10.00</td><td class="num">0.56</td><td class="num">35.0</td></tr> <tr><td>Donovan Mitchell</td><td>SAC</td><td class="num">2</td><td class="num">34.00</td><td class="num">3.50</td><td class="num">0.334</td><td class="num">12.00</td><td class="num">0.49</td><td class="num">34.0</td></tr> <tr><td>Donovan Mitchell</td><td>DEN</td><td class="num">1</td><td class="num">32.00</td><td class="num">3.00</td><td class="num">0.300</td><td class="num">11.00</td><td class="num">0.48</td><td class="num">34.0</td></tr> <tr><td>Donovan Mitchell</td><td>ATL</td><td class="num">1</td><td class="num">31.00</td><td class="num">1.00</td><td class="num">0.250</td><td class="num">12.00</td><td class="num">0.63</td><td class="num">34.0</td></tr> <tr><td>Donovan Mitchell</td><td>BOS</td><td class="num">1</td><td class="num">30.00</td><td class="num">3.00</td><td class="num">0.333</td><td class="num">9.00</td><td class="num">0.50</td><td class="num">33.0</td></tr> <tr><td>Donovan Mitchell</td><td>WAS</td><td class="num">1</td><td class="num">30.00</td><td class="num">2.00</td><td class="num">0.286</td><td class="num">11.00</td><td class="num">0.58</td><td class="num">27.0</td></tr> <tr><td>Donovan Mitchell</td><td>LAC</td><td class="num">1</td><td class="num">29.00</td><td class="num">3.00</td><td class="num">0.333</td><td class="num">10.00</td><td class="num">0.53</td><td class="num">30.0</td></tr> <tr><td>Donovan Mitchell</td><td>CHA</td><td class="num">2</td><td class="num">28.00</td><td class="num">2.00</td><td class="num">0.268</td><td class="num">8.50</td><td class="num">0.40</td><td class="num">35.5</td></tr> <tr><td>Donovan Mitchell</td><td>NOP</td><td class="num">1</td><td class="num">27.00</td><td class="num">3.00</td><td class="num">0.375</td><td class="num">9.00</td><td class="num">0.39</td><td class="num">39.0</td></tr> <tr><td>Donovan Mitchell</td><td>GSW</td><td class="num">1</td><td class="num">25.00</td><td class="num">4.00</td><td class="num">0.571</td><td class="num">7.00</td><td class="num">0.50</td><td class="num">34.0</td></tr> <tr><td>Donovan Mitchell</td><td>DAL</td><td class="num">2</td><td class="num">25.00</td><td class="num">2.50</td><td class="num">0.307</td><td class="num">10.50</td><td class="num">0.55</td><td class="num">33.5</td></tr> <tr><td>Donovan Mitchell</td><td>NYK</td><td class="num">1</td><td class="num">23.00</td><td class="num">2.00</td><td class="num">0.250</td><td class="num">5.00</td><td class="num">0.28</td><td class="num">31.0</td></tr> <tr><td>Donovan Mitchell</td><td>OKC</td><td class="num">2</td><td class="num">19.50</td><td class="num">0.50</td><td class="num">0.056</td><td class="num">7.00</td><td class="num">0.38</td><td class="num">35.0</td></tr> <tr><td>Donovan Mitchell</td><td>MIL</td><td class="num">1</td><td class="num">19.00</td><td class="num">1.00</td><td class="num">0.250</td><td class="num">4.00</td><td class="num">0.29</td><td class="num">33.0</td></tr> <tr><td>Donovan Mitchell</td><td>LAL</td><td class="num">2</td><td class="num">17.50</td><td class="num">1.50</td><td class="num">0.167</td><td class="num">6.50</td><td class="num">0.41</td><td class="num">26.0</td></tr> <tr><td>Donovan Mitchell</td><td>MIA</td><td class="num">2</td><td class="num">17.00</td><td class="num">2.00</td><td class="num">0.222</td><td class="num">6.50</td><td class="num">0.32</td><td class="num">31.5</td></tr> <tr><td>Donovan Mitchell</td><td>PHI</td><td class="num">1</td><td class="num">17.00</td><td class="num">0.00</td><td class="num">0.000</td><td class="num">4.00</td><td class="num">0.36</td><td class="num">31.0</td></tr> <tr><td>Donovan Mitchell</td><td>BKN</td><td class="num">1</td><td class="num">17.00</td><td class="num">2.00</td><td class="num">0.500</td><td class="num">7.00</td><td class="num">0.58</td><td class="num">20.0</td></tr> <tr><td>Donovan Mitchell</td><td>PHX</td><td class="num">1</td><td class="num">16.00</td><td class="num">3.00</td><td class="num">0.375</td><td class="num">6.00</td><td class="num">0.50</td><td class="num">27.0</td></tr> <tr><td>Donovan Mitchell</td><td>POR</td><td class="num">1</td><td class="num">14.00</td><td class="num">2.00</td><td class="num">0.286</td><td class="num">6.00</td><td class="num">0.40</td><td class="num">31.0</td></tr> </table> </div>
  
       <div class="takeaway">
         <p><b>Takeaway:</b> By combining a CTE, conditional logic, aggregate functions, and grouping, I created a comparison of the Cavaliers' performance across home and away games. This analysis helps identify which statistical differences are associated with wins and losses and whether those patterns change depending on whether the game is played at home or away.</p>
