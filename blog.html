@@ -631,6 +631,175 @@ ORDER BY avg_points DESC;
        <p><b>Takeaway:</b>Donovan Mitchell averaged his most points against Indiana (37.67 across three games), followed by Orlando (37.00 across four games) and Atlanta (36.67 across three games). His three-point shooting was particularly strong against Golden State, where he averaged 5.50 made threes per game while shooting 53.6%. Brooklyn recorded his highest average field-goal percentage at 62.5%, although that figure was based on only two games. These comparisons demonstrate the value of analyzing multiple performance metrics together while considering sample size and playing time when drawing conclusions..</p> </div>
     </article>
 
+     <article class="entry" data-tool="SQL">
+      <div class="meta">
+        <time datetime="2026-10-09">Oct 8, 2026</time>
+        <span class="pill">SQL</span>
+      </div>
+ 
+      <h2>How Do the Cleveland Cavaliers Perform in Home and Away Wins and Losses?</h2>
+ 
+      <h3>The question</h3>
+      <p>
+        How do the Cleveland Cavaliers' average points, assists, rebounds,
+        and three-point shooting percentage differ between wins and losses
+        at home and on the road during the 2025–2026 NBA season?
+      </p>
+ 
+      <h3>The approach</h3>
+      <p>
+        I used a Common Table Expression (CTE) to isolate Cleveland Cavaliers
+        game records and classify each game as home or away based on the
+        matchup. I then grouped the games by result and location, calculating
+        the average points, assists, rebounds, and three-point shooting
+        percentage for each combination.
+      </p>
+      <p>
+        I used aggregate functions with <code>GROUP BY</code> to compare
+        performance across the four categories: home wins, home losses,
+        away wins, and away losses. I also rounded the averages to two
+        decimal places to make the results easier to interpret.
+      </p>
+
+
+<pre><codeCREATE temporary table CAVS_GAMES AS(
+select GAME_ID , GAME_DATE , TEAM_NAME, MATCHUP,
+CASE
+	WHEN MATCHUP LIKE '% vs. %' THEN 'HOME'
+	ELSE 'AWAY'
+    END AS LOCATION,
+datediff(GAME_DATE, LAG(GAME_DATE) OVER (ORDER BY GAME_DATE)) - 1 AS REST_DAYS
+from  nba_2025_2026_games games
+where TEAM_NAME = 'Cleveland Cavaliers'
+GROUP BY GAME_ID,GAME_DATE, MATCHUP, TEAM_NAME, MATCHUP
+order by GAME_DATE
+);</code></pre>
+       
+<pre><code>with rest_days as(
+SELECT GAME_ID, GAME_DATE, LOCATION,
+CASE
+           WHEN rest_days = 0 THEN 'B2B'
+           WHEN rest_days = 1 THEN '1 day'
+           WHEN rest_days BETWEEN 2 AND 3 THEN '2-3 days'
+           WHEN rest_days >= 4 THEN '4+ days'
+		end as rest
+FROM CAVS_GAMES
+)
+SELECT
+    rd.rest                                         AS rest_bucket,
+    COUNT(*)                                        AS games,
+    ROUND(AVG(g.PTS), 1)                            AS avg_pts,
+	ROUND(AVG(g.REB), 1)							AS avg_reb,
+    ROUND(AVG(g.STL), 1)							AS avg_stl,
+    ROUND(AVG(g.PLUS_MINUS), 2)                     AS avg_plus_minus,
+    ROUND(SUM(g.FGM + 0.5 * g.FG3M) / SUM(g.FGA), 3) AS efg_pct,
+    ROUND(AVG(g.TOV), 1)                            AS avg_tov,
+    SUM(g.WL = 'W')                                 AS wins,
+    SUM(g.WL = 'L')                                 AS losses
+FROM rest_days rd
+JOIN nba_2025_2026_games g
+    ON rd.GAME_ID = g.GAME_ID
+WHERE g.TEAM_NAME = 'Cleveland Cavaliers'
+GROUP BY rd.rest
+ORDER BY rd.rest;</code></pre>
+ 
+      <h3>The result</h3>
+      <p>
+        The query produces four rows summarizing the Cavaliers' average
+        performance: home wins, home losses, away wins, and away losses.
+        Each row includes points, assists, rebounds, and three-point
+        shooting percentage, allowing direct comparisons between winning
+        and losing performances at different locations.
+      </p>
+ 
+      <!-- RESULT TABLE: numbers come from the query output. -->
+      <div class="result">
+        <table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>rest_bucket</th>
+            <th>games</th>
+            <th>avg_pts</th>
+            <th>avg_reb</th>
+            <th>avg_stl</th>
+            <th>avg_plus_minus</th>
+            <th>efg_pct</th>
+            <th>avg_tov</th>
+            <th>wins</th>
+            <th>losses</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>NULL</td>
+            <td>1</td>
+            <td>111.0</td>
+            <td>32.0</td>
+            <td>8.0</td>
+            <td>-8</td>
+            <td>0.576</td>
+            <td>15.0</td>
+            <td>0</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>1 day</td>
+            <td>54</td>
+            <td>119.6</td>
+            <td>45.3</td>
+            <td>8.6</td>
+            <td>4.56</td>
+            <td>0.562</td>
+            <td>13.8</td>
+            <td>35</td>
+            <td>19</td>
+        </tr>
+        <tr>
+            <td>2-3 days</td>
+            <td>10</td>
+            <td>124.0</td>
+            <td>41.6</td>
+            <td>9.1</td>
+            <td>2.5</td>
+            <td>0.579</td>
+            <td>13.3</td>
+            <td>7</td>
+            <td>3</td>
+        </tr>
+        <tr>
+            <td>4+ days</td>
+            <td>3</td>
+            <td>113.3</td>
+            <td>48.7</td>
+            <td>7.3</td>
+            <td>7</td>
+            <td>0.520</td>
+            <td>9.0</td>
+            <td>2</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>B2B</td>
+            <td>14</td>
+            <td>118.0</td>
+            <td>43.1</td>
+            <td>7.9</td>
+            <td>3.79</td>
+            <td>0.552</td>
+            <td>12.2</td>
+            <td>8</td>
+            <td>6</td>
+        </tr>
+    </tbody>
+</table>
+      </div>
+ 
+      <div class="takeaway">
+        <p><b>Takeaway:</b> By combining a CTE, conditional logic, aggregate functions, and grouping, I created a comparison of the Cavaliers' performance across home and away games. This analysis helps identify which statistical differences are associated with wins and losses and whether those patterns change depending on whether the game is played at home or away.</p>
+        <p>There are several things that stood out to me when looking at this data. First, when the Cavs win, regardless of whether they play at home or away, they average nearly 10 more points than their opponents. Specifically, at home, this may be attributed to their nearly 10 percentage-point increase in three-point shooting percentage in wins compared to home losses.</p>
+      </div>
+    </article>
+
 
 
   </div>
