@@ -51,3 +51,22 @@ join total_against t2
 GROUP BY t1.TEAM_NAME
 ORDER BY AVG_POINTS_ALLOWED DESC;
 ```
+
+
+``` sql under/over temp
+select nameI, assists, 
+CASE
+		WHEN games.MATCHUP LIKE 'CLE %' 
+		THEN SUBSTRING_INDEX(games.MATCHUP, ' ', -1)
+		ELSE SUBSTRING_INDEX(games.MATCHUP, ' ', 1)
+        END AS opponent,
+CASE
+    WHEN assists > 5.5 THEN 'OVER'
+    ELSE 'UNDER'
+END AS under_over
+from nba_2025_2026_games games
+left join cavaliers_2025_2026_game_by_game cavs
+	on games.GAME_ID = cavs.gameId
+WHERE cavs.minutes IS NOT NULL AND personId = 201935 AND TEAM_NAME = 'Cleveland Cavaliers';
+```
+
