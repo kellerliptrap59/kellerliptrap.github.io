@@ -632,37 +632,43 @@ ORDER BY avg_points DESC;
     </article>
 
      <article class="entry" data-tool="SQL">
-      <div class="meta">
-        <time datetime="2026-10-09">Oct 8, 2026</time>
-        <span class="pill">SQL</span>
-      </div>
- 
-      <h2>How Do the Cleveland Cavaliers Perform in Home and Away Wins and Losses?</h2>
- 
-      <h3>The question</h3>
-      <p>
-        How do the Cleveland Cavaliers' average points, assists, rebounds,
-        and three-point shooting percentage differ between wins and losses
-        at home and on the road during the 2025–2026 NBA season?
-      </p>
- 
-      <h3>The approach</h3>
-      <p>
-        I used a Common Table Expression (CTE) to isolate Cleveland Cavaliers
-        game records and classify each game as home or away based on the
-        matchup. I then grouped the games by result and location, calculating
-        the average points, assists, rebounds, and three-point shooting
-        percentage for each combination.
-      </p>
-      <p>
-        I used aggregate functions with <code>GROUP BY</code> to compare
-        performance across the four categories: home wins, home losses,
-        away wins, and away losses. I also rounded the averages to two
-        decimal places to make the results easier to interpret.
-      </p>
+  <div class="meta">
+    <time datetime="2026-10-08">Oct 8, 2026</time>
+    <span class="pill">SQL</span>
+  </div>
 
+  <h2>Did the Cleveland Cavaliers Play Worse on Back-to-Backs?</h2>
 
-<pre><codeCREATE temporary table CAVS_GAMES AS(
+  <h3>The question</h3>
+  <p>
+    Did days of rest affect how the Cleveland Cavaliers played in the
+    2025–2026 regular season? Specifically, how do their average points,
+    rebounds, steals, turnovers, effective field goal percentage (eFG%),
+    point margin, and win-loss record on the second night of a back-to-back
+    compare with games played on one day, two to three days, or four or more
+    days of rest?
+  </p>
+
+  <h3>The approach</h3>
+  <p>
+    First, I built a temporary table of the Cavaliers' 82 regular-season
+    games, ordered by date, and used the <code>LAG()</code> window function
+    to calculate the days off since their previous game. I ordered by
+    <code>GAME_DATE</code> rather than <code>GAME_ID</code> because the IDs
+    for special games (opening night, Christmas, NBA Cup) are out of
+    sequence. Games were also labeled home or away from the matchup text.
+  </p>
+  <p>
+    Next, I used a CTE to sort each game into a rest bucket: back-to-back
+    (0 days off), 1 day, 2–3 days, or 4+ days. The 4+ bucket captures longer
+    breaks like the All-Star break. I joined the buckets to the game box
+    scores and grouped by bucket. eFG% is pooled, meaning total makes over
+    total attempts, so games with more shots count for more. I used point
+    margin (<code>PLUS_MINUS</code>) as the main outcome because it is more
+    stable than win/loss.
+  </p>
+
+<pre><code>CREATE temporary table CAVS_GAMES AS(
 select GAME_ID , GAME_DATE , TEAM_NAME, MATCHUP,
 CASE
 	WHEN MATCHUP LIKE '% vs. %' THEN 'HOME'
@@ -674,7 +680,7 @@ where TEAM_NAME = 'Cleveland Cavaliers'
 GROUP BY GAME_ID,GAME_DATE, MATCHUP, TEAM_NAME, MATCHUP
 order by GAME_DATE
 );</code></pre>
-       
+
 <pre><code>with rest_days as(
 SELECT GAME_ID, GAME_DATE, LOCATION,
 CASE
@@ -702,103 +708,57 @@ JOIN nba_2025_2026_games g
 WHERE g.TEAM_NAME = 'Cleveland Cavaliers'
 GROUP BY rd.rest
 ORDER BY rd.rest;</code></pre>
- 
-      <h3>The result</h3>
-      <p>
-        The query produces four rows summarizing the Cavaliers' average
-        performance: home wins, home losses, away wins, and away losses.
-        Each row includes points, assists, rebounds, and three-point
-        shooting percentage, allowing direct comparisons between winning
-        and losing performances at different locations.
-      </p>
- 
-      <!-- RESULT TABLE: numbers come from the query output. -->
-      <div class="result">
-        <table border="1" cellpadding="5" cellspacing="0">
-    <thead>
+
+  <h3>The result</h3>
+  <p>
+    The query returns five rows: the four rest buckets plus a
+    <code>NULL</code> row, which is the season opener (no prior game, so no
+    rest value). The 82 games split into 14 back-to-backs, 54 games on one
+    day of rest, 10 on two to three days, 3 on four or more, and the opener.
+  </p>
+
+  <div class="result">
+    <table border="1" cellpadding="5" cellspacing="0">
+      <thead>
         <tr>
-            <th>rest_bucket</th>
-            <th>games</th>
-            <th>avg_pts</th>
-            <th>avg_reb</th>
-            <th>avg_stl</th>
-            <th>avg_plus_minus</th>
-            <th>efg_pct</th>
-            <th>avg_tov</th>
-            <th>wins</th>
-            <th>losses</th>
+          <th>rest_bucket</th>
+          <th>games</th>
+          <th>avg_pts</th>
+          <th>avg_reb</th>
+          <th>avg_stl</th>
+          <th>avg_plus_minus</th>
+          <th>efg_pct</th>
+          <th>avg_tov</th>
+          <th>wins</th>
+          <th>losses</th>
         </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>NULL</td>
-            <td>1</td>
-            <td>111.0</td>
-            <td>32.0</td>
-            <td>8.0</td>
-            <td>-8</td>
-            <td>0.576</td>
-            <td>15.0</td>
-            <td>0</td>
-            <td>1</td>
-        </tr>
-        <tr>
-            <td>1 day</td>
-            <td>54</td>
-            <td>119.6</td>
-            <td>45.3</td>
-            <td>8.6</td>
-            <td>4.56</td>
-            <td>0.562</td>
-            <td>13.8</td>
-            <td>35</td>
-            <td>19</td>
-        </tr>
-        <tr>
-            <td>2-3 days</td>
-            <td>10</td>
-            <td>124.0</td>
-            <td>41.6</td>
-            <td>9.1</td>
-            <td>2.5</td>
-            <td>0.579</td>
-            <td>13.3</td>
-            <td>7</td>
-            <td>3</td>
-        </tr>
-        <tr>
-            <td>4+ days</td>
-            <td>3</td>
-            <td>113.3</td>
-            <td>48.7</td>
-            <td>7.3</td>
-            <td>7</td>
-            <td>0.520</td>
-            <td>9.0</td>
-            <td>2</td>
-            <td>1</td>
-        </tr>
-        <tr>
-            <td>B2B</td>
-            <td>14</td>
-            <td>118.0</td>
-            <td>43.1</td>
-            <td>7.9</td>
-            <td>3.79</td>
-            <td>0.552</td>
-            <td>12.2</td>
-            <td>8</td>
-            <td>6</td>
-        </tr>
-    </tbody>
-</table>
-      </div>
- 
-      <div class="takeaway">
-        <p><b>Takeaway:</b> By combining a CTE, conditional logic, aggregate functions, and grouping, I created a comparison of the Cavaliers' performance across home and away games. This analysis helps identify which statistical differences are associated with wins and losses and whether those patterns change depending on whether the game is played at home or away.</p>
-        <p>There are several things that stood out to me when looking at this data. First, when the Cavs win, regardless of whether they play at home or away, they average nearly 10 more points than their opponents. Specifically, at home, this may be attributed to their nearly 10 percentage-point increase in three-point shooting percentage in wins compared to home losses.</p>
-      </div>
-    </article>
+      </thead>
+      <tbody>
+        <tr><td>NULL</td><td>1</td><td>111.0</td><td>32.0</td><td>8.0</td><td>-8</td><td>0.576</td><td>15.0</td><td>0</td><td>1</td></tr>
+        <tr><td>1 day</td><td>54</td><td>119.6</td><td>45.3</td><td>8.6</td><td>4.56</td><td>0.562</td><td>13.8</td><td>35</td><td>19</td></tr>
+        <tr><td>2-3 days</td><td>10</td><td>124.0</td><td>41.6</td><td>9.1</td><td>2.5</td><td>0.579</td><td>13.3</td><td>7</td><td>3</td></tr>
+        <tr><td>4+ days</td><td>3</td><td>113.3</td><td>48.7</td><td>7.3</td><td>7</td><td>0.520</td><td>9.0</td><td>2</td><td>1</td></tr>
+        <tr><td>B2B</td><td>14</td><td>118.0</td><td>43.1</td><td>7.9</td><td>3.79</td><td>0.552</td><td>12.2</td><td>8</td><td>6</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="takeaway">
+    <p><b>Takeaway:</b> I found little evidence that the Cavaliers played
+    worse on the second night of a back-to-back. Their average margin was
+    +3.79 on back-to-backs versus +4.56 with one day of rest, a gap of less
+    than one point. Their eFG% was close (.552 vs. .562), and they actually
+    committed fewer turnovers on back-to-backs (12.2 per game vs. 13.8). The
+    clearest gap is in record: 8-6 (57%) on back-to-backs versus 35-19 (65%)
+    with one day of rest.</p>
+    <p>Rest did not translate into better results either. The 2-3 day
+    group had the best scoring (124.0 points) and eFG% (.579), but its average
+    margin (+2.5) was lower than the back-to-back group's. The 4+ day group
+    had the highest margin (+7), but that is only three games, and the
+    <code>NULL</code> row is the single season opener, so neither supports a
+    conclusion.</p>
+  </div>
+</article>
 
 
 
