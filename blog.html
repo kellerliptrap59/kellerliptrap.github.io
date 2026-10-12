@@ -247,50 +247,388 @@ ORDER BY
         I then used aggregate functions, including <code>AVG()</code> and <code>COUNT()</code>, with <code>GROUP BY</code> to calculate his average performance and number of games against each opponent. Finally, I used <code>ORDER BY</code> to rank opponents by his average points per game.
       </p>
  
-<pre><code>with donovan_mitchell_stats as(
-SELECT 
-    CONCAT(box.firstName, ' ', box.familyName) AS player_name,
-    CASE
-        WHEN game.MATCHUP LIKE 'CLE %' 
-            THEN SUBSTRING_INDEX(game.MATCHUP, ' ', -1)
-        ELSE SUBSTRING_INDEX(game.MATCHUP, ' ', 1)
-    END AS opponent,
-    box.points pts,
-    box.threePointersMade threes_made,
-    box.threePointersPercentage three_pct,
-    box.fieldGoalsMade fgm,
-    box.fieldGoalsPercentage fg_made,
-    box.minutes min
-FROM nba_boxscores AS box
-JOIN nba_2025_2026_games AS game
-    ON box.gameId = game.game_Id
-    AND box.teamTricode = game.TEAM_ABBREVIATION
-WHERE box.personId = 1628378
-ORDER BY opponent
+<pre><code>WITH donovan_mitchell_stats AS (
+    SELECT 
+        CONCAT(box.firstName, ' ', box.familyName) AS player_name,
+        CASE
+            WHEN game.MATCHUP LIKE 'CLE %' 
+                THEN SUBSTRING_INDEX(game.MATCHUP, ' ', -1)
+            ELSE SUBSTRING_INDEX(game.MATCHUP, ' ', 1)
+        END AS opponent,
+        game.GAME_DATE AS game_date,
+        game.MATCHUP AS matchup,
+        game.WL AS result,
+        box.points AS pts,
+        box.threePointersMade AS threes_made,
+        box.threePointersPercentage AS three_pct,
+        box.fieldGoalsMade AS fgm,
+        box.fieldGoalsPercentage AS fg_pct,
+        box.minutes AS min
+    FROM nba_2025_2026_games AS game
+    LEFT JOIN cavaliers_2025_2026_game_by_game AS box
+        ON box.gameId = game.game_Id
+        AND box.teamTricode = game.TEAM_ABBREVIATION
+        AND box.personId = 1628378
+    WHERE game.TEAM_ABBREVIATION = 'CLE' AND box.minutes IS NOT NULL
 )
 SELECT 
     player_name,
     opponent,
-    COUNT(*) AS games_played,
+    COUNT(pts) AS games_played,
     ROUND(AVG(pts), 2) AS avg_points,
     ROUND(AVG(threes_made), 2) AS avg_threes_made,
     ROUND(AVG(three_pct), 3) AS avg_three_pct,
     ROUND(AVG(fgm), 2) AS avg_fgm,
-    ROUND(AVG(fg_made), 2) AS avg_fg_made,
+    ROUND(AVG(fg_pct), 3) AS avg_fg_pct,
     ROUND(AVG(min), 2) AS avg_minutes
 FROM donovan_mitchell_stats
 GROUP BY player_name, opponent
-ORDER BY avg_points DESC;</code></pre>
+ORDER BY avg_points DESC;
+</code></pre>
  
       <h3>The result</h3>
       <p>
         The query groups Donovan Mitchell's performances by opponent and ranks the results by average points per game. The table also shows how many games contributed to each average, along with his shooting statistics and playing time. 
       </p>
  
-      <!-- RESULT TABLE: numbers come from the query output. --> <div class="result"> <table> <tr> <th>Player</th> <th>Opponent</th> <th class="num">Games</th> <th class="num">Avg. Points</th> <th class="num">Avg. 3PM</th> <th class="num">Avg. 3P%</th> <th class="num">Avg. FGM</th> <th class="num">Avg. FG%</th> <th class="num">Avg. Minutes</th> </tr> <tr><td>Donovan Mitchell</td><td>IND</td><td class="num">1</td><td class="num">38.00</td><td class="num">2.00</td><td class="num">0.286</td><td class="num">16.00</td><td class="num">0.59</td><td class="num">32.0</td></tr> <tr><td>Donovan Mitchell</td><td>ORL</td><td class="num">4</td><td class="num">37.00</td><td class="num">3.50</td><td class="num">0.403</td><td class="num">13.25</td><td class="num">0.53</td><td class="num">35.5</td></tr> <tr><td>Donovan Mitchell</td><td>UTA</td><td class="num">1</td><td class="num">34.00</td><td class="num">3.00</td><td class="num">0.375</td><td class="num">10.00</td><td class="num">0.56</td><td class="num">35.0</td></tr> <tr><td>Donovan Mitchell</td><td>SAC</td><td class="num">2</td><td class="num">34.00</td><td class="num">3.50</td><td class="num">0.334</td><td class="num">12.00</td><td class="num">0.49</td><td class="num">34.0</td></tr> <tr><td>Donovan Mitchell</td><td>DEN</td><td class="num">1</td><td class="num">32.00</td><td class="num">3.00</td><td class="num">0.300</td><td class="num">11.00</td><td class="num">0.48</td><td class="num">34.0</td></tr> <tr><td>Donovan Mitchell</td><td>ATL</td><td class="num">1</td><td class="num">31.00</td><td class="num">1.00</td><td class="num">0.250</td><td class="num">12.00</td><td class="num">0.63</td><td class="num">34.0</td></tr> <tr><td>Donovan Mitchell</td><td>BOS</td><td class="num">1</td><td class="num">30.00</td><td class="num">3.00</td><td class="num">0.333</td><td class="num">9.00</td><td class="num">0.50</td><td class="num">33.0</td></tr> <tr><td>Donovan Mitchell</td><td>WAS</td><td class="num">1</td><td class="num">30.00</td><td class="num">2.00</td><td class="num">0.286</td><td class="num">11.00</td><td class="num">0.58</td><td class="num">27.0</td></tr> <tr><td>Donovan Mitchell</td><td>LAC</td><td class="num">1</td><td class="num">29.00</td><td class="num">3.00</td><td class="num">0.333</td><td class="num">10.00</td><td class="num">0.53</td><td class="num">30.0</td></tr> <tr><td>Donovan Mitchell</td><td>CHA</td><td class="num">2</td><td class="num">28.00</td><td class="num">2.00</td><td class="num">0.268</td><td class="num">8.50</td><td class="num">0.40</td><td class="num">35.5</td></tr> <tr><td>Donovan Mitchell</td><td>NOP</td><td class="num">1</td><td class="num">27.00</td><td class="num">3.00</td><td class="num">0.375</td><td class="num">9.00</td><td class="num">0.39</td><td class="num">39.0</td></tr> <tr><td>Donovan Mitchell</td><td>GSW</td><td class="num">1</td><td class="num">25.00</td><td class="num">4.00</td><td class="num">0.571</td><td class="num">7.00</td><td class="num">0.50</td><td class="num">34.0</td></tr> <tr><td>Donovan Mitchell</td><td>DAL</td><td class="num">2</td><td class="num">25.00</td><td class="num">2.50</td><td class="num">0.307</td><td class="num">10.50</td><td class="num">0.55</td><td class="num">33.5</td></tr> <tr><td>Donovan Mitchell</td><td>NYK</td><td class="num">1</td><td class="num">23.00</td><td class="num">2.00</td><td class="num">0.250</td><td class="num">5.00</td><td class="num">0.28</td><td class="num">31.0</td></tr> <tr><td>Donovan Mitchell</td><td>OKC</td><td class="num">2</td><td class="num">19.50</td><td class="num">0.50</td><td class="num">0.056</td><td class="num">7.00</td><td class="num">0.38</td><td class="num">35.0</td></tr> <tr><td>Donovan Mitchell</td><td>MIL</td><td class="num">1</td><td class="num">19.00</td><td class="num">1.00</td><td class="num">0.250</td><td class="num">4.00</td><td class="num">0.29</td><td class="num">33.0</td></tr> <tr><td>Donovan Mitchell</td><td>LAL</td><td class="num">2</td><td class="num">17.50</td><td class="num">1.50</td><td class="num">0.167</td><td class="num">6.50</td><td class="num">0.41</td><td class="num">26.0</td></tr> <tr><td>Donovan Mitchell</td><td>MIA</td><td class="num">2</td><td class="num">17.00</td><td class="num">2.00</td><td class="num">0.222</td><td class="num">6.50</td><td class="num">0.32</td><td class="num">31.5</td></tr> <tr><td>Donovan Mitchell</td><td>PHI</td><td class="num">1</td><td class="num">17.00</td><td class="num">0.00</td><td class="num">0.000</td><td class="num">4.00</td><td class="num">0.36</td><td class="num">31.0</td></tr> <tr><td>Donovan Mitchell</td><td>BKN</td><td class="num">1</td><td class="num">17.00</td><td class="num">2.00</td><td class="num">0.500</td><td class="num">7.00</td><td class="num">0.58</td><td class="num">20.0</td></tr> <tr><td>Donovan Mitchell</td><td>PHX</td><td class="num">1</td><td class="num">16.00</td><td class="num">3.00</td><td class="num">0.375</td><td class="num">6.00</td><td class="num">0.50</td><td class="num">27.0</td></tr> <tr><td>Donovan Mitchell</td><td>POR</td><td class="num">1</td><td class="num">14.00</td><td class="num">2.00</td><td class="num">0.286</td><td class="num">6.00</td><td class="num">0.40</td><td class="num">31.0</td></tr> </table> </div>
- 
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Player Name</th>
+            <th>Opponent</th>
+            <th>Games Played</th>
+            <th>Avg Points</th>
+            <th>Avg Threes Made</th>
+            <th>Avg Three Pct</th>
+            <th>Avg FGM</th>
+            <th>Avg FG Pct</th>
+            <th>Avg Minutes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>IND</td>
+            <td>3</td>
+            <td>37.67</td>
+            <td>3.33</td>
+            <td>0.351</td>
+            <td>14.33</td>
+            <td>0.562</td>
+            <td>33.33</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>ORL</td>
+            <td>4</td>
+            <td>37.00</td>
+            <td>3.50</td>
+            <td>0.403</td>
+            <td>13.25</td>
+            <td>0.528</td>
+            <td>35.50</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>ATL</td>
+            <td>3</td>
+            <td>36.67</td>
+            <td>5.33</td>
+            <td>0.417</td>
+            <td>13.00</td>
+            <td>0.580</td>
+            <td>34.67</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>WAS</td>
+            <td>3</td>
+            <td>34.00</td>
+            <td>4.67</td>
+            <td>0.406</td>
+            <td>12.00</td>
+            <td>0.509</td>
+            <td>29.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>SAC</td>
+            <td>2</td>
+            <td>34.00</td>
+            <td>3.50</td>
+            <td>0.334</td>
+            <td>12.00</td>
+            <td>0.491</td>
+            <td>34.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>LAC</td>
+            <td>2</td>
+            <td>33.00</td>
+            <td>4.00</td>
+            <td>0.444</td>
+            <td>12.00</td>
+            <td>0.581</td>
+            <td>31.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>DEN</td>
+            <td>2</td>
+            <td>32.50</td>
+            <td>4.00</td>
+            <td>0.358</td>
+            <td>12.50</td>
+            <td>0.530</td>
+            <td>34.50</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>DET</td>
+            <td>2</td>
+            <td>32.50</td>
+            <td>2.50</td>
+            <td>0.410</td>
+            <td>11.50</td>
+            <td>0.599</td>
+            <td>31.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>MEM</td>
+            <td>1</td>
+            <td>30.00</td>
+            <td>4.00</td>
+            <td>0.308</td>
+            <td>10.00</td>
+            <td>0.476</td>
+            <td>32.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>NYK</td>
+            <td>3</td>
+            <td>29.33</td>
+            <td>2.67</td>
+            <td>0.305</td>
+            <td>9.67</td>
+            <td>0.413</td>
+            <td>32.67</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>MIN</td>
+            <td>2</td>
+            <td>29.00</td>
+            <td>3.00</td>
+            <td>0.325</td>
+            <td>9.50</td>
+            <td>0.464</td>
+            <td>33.50</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>PHI</td>
+            <td>4</td>
+            <td>27.75</td>
+            <td>3.75</td>
+            <td>0.383</td>
+            <td>8.50</td>
+            <td>0.472</td>
+            <td>34.25</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>UTA</td>
+            <td>2</td>
+            <td>27.50</td>
+            <td>3.50</td>
+            <td>0.410</td>
+            <td>8.50</td>
+            <td>0.473</td>
+            <td>34.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>GSW</td>
+            <td>2</td>
+            <td>27.00</td>
+            <td>5.50</td>
+            <td>0.536</td>
+            <td>9.00</td>
+            <td>0.462</td>
+            <td>35.50</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>NOP</td>
+            <td>2</td>
+            <td>27.00</td>
+            <td>2.50</td>
+            <td>0.354</td>
+            <td>10.00</td>
+            <td>0.543</td>
+            <td>34.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>MIL</td>
+            <td>3</td>
+            <td>26.67</td>
+            <td>2.00</td>
+            <td>0.292</td>
+            <td>9.00</td>
+            <td>0.457</td>
+            <td>33.67</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>BKN</td>
+            <td>2</td>
+            <td>26.00</td>
+            <td>4.00</td>
+            <td>0.550</td>
+            <td>8.50</td>
+            <td>0.625</td>
+            <td>27.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>CHA</td>
+            <td>4</td>
+            <td>25.75</td>
+            <td>2.75</td>
+            <td>0.293</td>
+            <td>8.25</td>
+            <td>0.404</td>
+            <td>34.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>DAL</td>
+            <td>2</td>
+            <td>25.00</td>
+            <td>2.50</td>
+            <td>0.307</td>
+            <td>10.50</td>
+            <td>0.552</td>
+            <td>33.50</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>PHX</td>
+            <td>2</td>
+            <td>25.00</td>
+            <td>3.50</td>
+            <td>0.473</td>
+            <td>8.00</td>
+            <td>0.528</td>
+            <td>28.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>TOR</td>
+            <td>2</td>
+            <td>24.00</td>
+            <td>2.50</td>
+            <td>0.236</td>
+            <td>6.50</td>
+            <td>0.344</td>
+            <td>34.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>POR</td>
+            <td>2</td>
+            <td>23.50</td>
+            <td>2.50</td>
+            <td>0.258</td>
+            <td>9.00</td>
+            <td>0.431</td>
+            <td>32.50</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>BOS</td>
+            <td>3</td>
+            <td>21.00</td>
+            <td>3.67</td>
+            <td>0.439</td>
+            <td>7.00</td>
+            <td>0.452</td>
+            <td>34.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>MIA</td>
+            <td>3</td>
+            <td>20.67</td>
+            <td>2.33</td>
+            <td>0.211</td>
+            <td>7.67</td>
+            <td>0.334</td>
+            <td>34.33</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>CHI</td>
+            <td>3</td>
+            <td>20.33</td>
+            <td>3.00</td>
+            <td>0.287</td>
+            <td>7.00</td>
+            <td>0.298</td>
+            <td>22.33</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>OKC</td>
+            <td>2</td>
+            <td>19.50</td>
+            <td>0.50</td>
+            <td>0.056</td>
+            <td>7.00</td>
+            <td>0.376</td>
+            <td>35.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>SAS</td>
+            <td>2</td>
+            <td>19.00</td>
+            <td>1.50</td>
+            <td>0.211</td>
+            <td>6.00</td>
+            <td>0.393</td>
+            <td>33.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>HOU</td>
+            <td>2</td>
+            <td>18.50</td>
+            <td>2.50</td>
+            <td>0.367</td>
+            <td>7.50</td>
+            <td>0.442</td>
+            <td>32.00</td>
+        </tr>
+        <tr>
+            <td>Donovan Mitchell</td>
+            <td>LAL</td>
+            <td>2</td>
+            <td>17.50</td>
+            <td>1.50</td>
+            <td>0.166</td>
+            <td>6.50</td>
+            <td>0.414</td>
+            <td>26.00</td>
+        </tr>
+    </tbody>
+</table> 
       <div class="takeaway">
-       <p><b>Takeaway:</b> Donovan Mitchell recorded his highest scoring average against Indiana, with 38.0 points in one game, followed by 37.0 points per game against Orlando across four games. Sacramento and Utah were next, with averages of 34.0 points per game.</p> <p>Orlando is a particularly useful comparison because the average is based on four games, more than any other opponent in this table. Mitchell averaged 3.5 three-pointers made per game against Orlando while shooting 40.3% from three-point range. By contrast, his lowest scoring average was 14.0 points against Portland in one game.</p> <p>These findings show how SQL aggregation can reveal differences in player performance by opponent. However, the number of games matters: results based on one game are less reliable indicators of typical performance than averages based on multiple games.</p> </div>
+       <p><b>Takeaway:</b>Donovan Mitchell averaged his most points against Indiana (37.67 across three games), followed by Orlando (37.00 across four games) and Atlanta (36.67 across three games). His three-point shooting was particularly strong against Golden State, where he averaged 5.50 made threes per game while shooting 53.6%. Brooklyn recorded his highest average field-goal percentage at 62.5%, although that figure was based on only two games. These comparisons demonstrate the value of analyzing multiple performance metrics together while considering sample size and playing time when drawing conclusions..</p> </div>
     </article>
 
 
