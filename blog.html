@@ -15,7 +15,7 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 "IBM Plex Sans",system-ui,sans-serif}
 h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",Arial,sans-serif;line-height:1;margin:0}
 a{color:var(--accent)}
-a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
 .wrap{max-width:960px;margin:0 auto;padding:0 24px}
 
 .top{background:var(--turf);color:var(--chalk);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 2px,transparent 2px 96px)}
@@ -26,15 +26,31 @@ nav a:hover,nav a[aria-current="page"]{opacity:1;color:var(--gold)}
 .hero h1{font-size:clamp(3.2rem,11vw,6.5rem);font-weight:800;text-transform:uppercase}
 .hero p{margin:16px 0 0;max-width:48ch;font-size:1.15rem;color:rgba(255,255,255,.88)}
 
-.filters{display:flex;gap:10px;flex-wrap:wrap;padding:28px 0 8px}
+.toolbar{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:28px 0 8px}
+.filters{display:flex;gap:10px;flex-wrap:wrap}
 .filters button{font:500 .95rem "IBM Plex Sans",sans-serif;padding:8px 16px;border-radius:99px;border:2px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer}
 .filters button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.toggles{display:flex;gap:10px}
+.toggles button{font:500 .9rem "IBM Plex Sans",sans-serif;padding:8px 14px;border-radius:6px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.toggles button:hover{border-color:var(--accent);color:var(--accent)}
 
-.entry{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--gold);border-radius:10px;padding:28px;margin:24px 0}
+/* Collapsible entries */
+.entry{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--gold);border-radius:10px;margin:24px 0}
+.entry[open]{border-top-color:var(--accent)}
 .entry[hidden]{display:none}
-.meta{display:flex;gap:12px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:.95rem;margin-bottom:12px}
+.entry>summary{list-style:none;cursor:pointer;padding:24px 28px;display:grid;grid-template-columns:1fr auto;gap:4px 16px;align-items:start}
+.entry>summary::-webkit-details-marker{display:none}
+.entry>summary:hover h2{color:var(--accent)}
+.meta{grid-column:1;display:flex;gap:12px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:.95rem;margin-bottom:8px}
 .pill{background:var(--accent-soft);color:var(--ink);padding:3px 12px;border-radius:99px;font-size:.85rem;font-weight:500}
-.entry h2{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:700;margin-bottom:16px}
+.entry h2{grid-column:1;font-size:clamp(1.8rem,4vw,2.4rem);font-weight:700;margin:0}
+.teaser{grid-column:1;margin:8px 0 0;color:var(--muted);max-width:62ch}
+.entry[open] .teaser{display:none}
+.chev{grid-column:2;grid-row:1 / span 3;align-self:center;width:30px;height:30px;border:2px solid var(--accent);border-radius:50%;position:relative}
+.chev:before{content:"";position:absolute;left:8px;top:7px;width:7px;height:7px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(45deg)}
+.entry[open] .chev:before{top:11px;transform:rotate(-135deg)}
+
+.entry-body{margin:0 28px;padding:4px 0 28px;border-top:1px solid var(--line)}
 .entry h3{font-size:1.25rem;font-weight:700;color:var(--accent);margin:24px 0 6px}
 .entry p{margin:0 0 12px;max-width:68ch}
 pre{margin:12px 0;padding:16px;border-radius:8px;background:#0D1B2A;color:#E6EEF3;overflow-x:auto;max-width:100%;font:400 .9rem/1.5 "IBM Plex Mono",ui-monospace,Consolas,monospace}
@@ -42,13 +58,13 @@ code{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:.9em}
 p code,li code{background:var(--accent-soft);padding:1px 6px;border-radius:4px}
 .result{overflow-x:auto}
 table{border-collapse:collapse;margin:12px 0;font-size:.95rem;min-width:260px}
-th,td{border:1px solid var(--line);padding:6px 12px;text-align:left}
+th,td{border:1px solid var(--line);padding:6px 12px;text-align:left;white-space:nowrap}
 th{background:var(--accent-soft)}
 .takeaway{border-left:4px solid var(--gold);padding:4px 0 4px 16px;margin-top:16px}
 .empty{color:var(--muted);padding:24px 0}
 footer{padding:28px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line);margin-top:48px}
-@media (max-width:640px){nav{justify-content:flex-start}.entry{padding:20px}}
-@media print{nav,.filters,footer{display:none}body{background:#fff;color:#000}.top{background:#fff;color:#000}.hero p{color:#000}}
+@media (max-width:640px){nav{justify-content:flex-start}.entry>summary{padding:18px 20px}.entry-body{margin:0 20px}}
+@media print{nav,.toolbar,footer{display:none}body{background:#fff;color:#000}.top{background:#fff;color:#000}.hero p{color:#000}}
 </style>
 </head>
 <body>
@@ -68,35 +84,49 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:.9rem;border-top:1px sol
 </div>
 
 <main class="wrap">
-  <div class="filters" role="group" aria-label="Filter by tool">
-    <button type="button" data-filter="all" aria-pressed="true">All</button>
-    <button type="button" data-filter="SQL" aria-pressed="false">SQL</button>
-    <button type="button" data-filter="Excel" aria-pressed="false">Excel</button>
-    <button type="button" data-filter="Python" aria-pressed="false">Python</button>
-    <button type="button" data-filter="Other" aria-pressed="false">Other</button>
+  <div class="toolbar">
+    <div class="filters" role="group" aria-label="Filter by tool">
+      <button type="button" data-filter="all" aria-pressed="true">All</button>
+      <button type="button" data-filter="SQL" aria-pressed="false">SQL</button>
+      <button type="button" data-filter="Excel" aria-pressed="false">Excel</button>
+      <button type="button" data-filter="Python" aria-pressed="false">Python</button>
+      <button type="button" data-filter="Other" aria-pressed="false">Other</button>
+    </div>
+    <div class="toggles">
+      <button type="button" id="expand">Expand all</button>
+      <button type="button" id="collapse">Collapse all</button>
+    </div>
   </div>
 
   <!--
   =====================================================================
   HOW TO ADD A NEW DAY
-  1. Copy everything from <article class="entry" ...> down to </article> below.
+  1. Copy everything from <details class="entry" ...> down to </details> below.
   2. Paste it at the TOP of the list (right under this comment) so the newest entry is first.
   3. Change data-tool to SQL, Excel, Python, or Other (this powers the filter buttons).
-  4. Update the date, tool label, question, and text.
-  5. Put code inside <pre><code> ... </code></pre>. Write < as &lt; and & as &amp; inside code.
+  4. Give it a unique id (used for links like blog.html#my-entry).
+  5. Update the date, tool label, title, one-line teaser, and the text in the body.
+     The teaser shows while the entry is collapsed.
+  6. Put code inside <pre><code> ... </code></pre>. Write < as &lt; and & as &amp; inside code.
+  7. Add the word "open" to <details> only if you want that entry expanded on load.
   =====================================================================
   -->
 
   <div id="entries">
 
     <!-- SAMPLE ENTRY (Python). Replace or delete. -->
-    <!-- <article class="entry" data-tool="Python">
-      <div class="meta"><time datetime="2026-10-09">Oct 9, 2026</time><span class="pill">Python</span></div>
-      <h2>How do I find the top 3 values in each group?</h2>
-      <h3>The question</h3>
-      <p>Given a table of sales by region, which three reps sold the most in each region?</p>
-      <h3>The approach</h3>
-      <p>Sort by sales, then use <code>groupby</code> with <code>head(3)</code> so each region keeps only its top rows.</p>
+    <!-- <details class="entry" data-tool="Python" id="sample-python">
+      <summary>
+        <div class="meta"><time datetime="2026-10-09">Oct 9, 2026</time><span class="pill">Python</span></div>
+        <h2>How do I find the top 3 values in each group?</h2>
+        <p class="teaser">Sort first, then group and keep the top rows per region.</p>
+        <span class="chev" aria-hidden="true"></span>
+      </summary>
+      <div class="entry-body">
+        <h3>The question</h3>
+        <p>Given a table of sales by region, which three reps sold the most in each region?</p>
+        <h3>The approach</h3>
+        <p>Sort by sales, then use <code>groupby</code> with <code>head(3)</code> so each region keeps only its top rows.</p>
 <pre><code>import pandas as pd
 
 top3 = (
@@ -106,567 +136,84 @@ top3 = (
       .sort_values(["region", "sales"], ascending=[True, False])
 )
 print(top3)</code></pre>
-      <h3>The result</h3>
-      <div class="result"><table>
-        <tr><th>region</th><th>rep</th><th>sales</th></tr>
-        <tr><td>East</td><td>Ava</td><td>9,400</td></tr>
-        <tr><td>East</td><td>Ben</td><td>8,100</td></tr>
-        <tr><td>West</td><td>Cara</td><td>7,700</td></tr>
-      </table></div>
-      <p class="takeaway"><b>Takeaway:</b> Sorting first and then grouping is a quick way to get "top N per group" without a loop. (Sample data for illustration.)</p>
-    </article> -->
+        <h3>The result</h3>
+        <div class="result"><table>
+          <tr><th>region</th><th>rep</th><th>sales</th></tr>
+          <tr><td>East</td><td>Ava</td><td>9,400</td></tr>
+          <tr><td>East</td><td>Ben</td><td>8,100</td></tr>
+          <tr><td>West</td><td>Cara</td><td>7,700</td></tr>
+        </table></div>
+        <p class="takeaway"><b>Takeaway:</b> Sorting first and then grouping is a quick way to get "top N per group" without a loop. (Sample data for illustration.)</p>
+      </div>
+    </details> -->
 
     <!-- SAMPLE ENTRY (SQL). Replace or delete. -->
-    <!-- <article class="entry" data-tool="SQL">
-      <div class="meta"><time datetime="2026-10-08">Oct 8, 2026</time><span class="pill">SQL</span></div>
-      <h2>Which customers placed more than one order?</h2>
-      <h3>The question</h3>
-      <p>I want a list of repeat customers and how many orders each one has placed.</p>
-      <h3>The approach</h3>
-      <p>Group orders by customer, count them, and filter the groups with <code>HAVING</code>, since <code>WHERE</code> can't filter on an aggregate.</p>
+    <!-- <details class="entry" data-tool="SQL" id="sample-sql">
+      <summary>
+        <div class="meta"><time datetime="2026-10-08">Oct 8, 2026</time><span class="pill">SQL</span></div>
+        <h2>Which customers placed more than one order?</h2>
+        <p class="teaser">Group by customer and filter the groups with HAVING.</p>
+        <span class="chev" aria-hidden="true"></span>
+      </summary>
+      <div class="entry-body">
+        <h3>The question</h3>
+        <p>I want a list of repeat customers and how many orders each one has placed.</p>
+        <h3>The approach</h3>
+        <p>Group orders by customer, count them, and filter the groups with <code>HAVING</code>, since <code>WHERE</code> can't filter on an aggregate.</p>
 <pre><code>SELECT customer_id,
        COUNT(*) AS order_count
 FROM orders
 GROUP BY customer_id
 HAVING COUNT(*) &gt; 1
 ORDER BY order_count DESC;</code></pre>
-      <h3>The result</h3>
-      <p>One row per repeat customer, sorted from most orders to fewest.</p>
-      <p class="takeaway"><b>Takeaway:</b> <code>WHERE</code> filters rows before grouping, and <code>HAVING</code> filters groups after. (Sample entry for illustration.)</p>
-    </article> -->
-
-
-    <article class="entry" data-tool="SQL">
-      <div class="meta">
-        <time datetime="2026-10-09">Oct 8, 2026</time>
-        <span class="pill">SQL</span>
+        <h3>The result</h3>
+        <p>One row per repeat customer, sorted from most orders to fewest.</p>
+        <p class="takeaway"><b>Takeaway:</b> <code>WHERE</code> filters rows before grouping, and <code>HAVING</code> filters groups after. (Sample entry for illustration.)</p>
       </div>
- 
-      <h2>How Do the Cleveland Cavaliers Perform in Home and Away Wins and Losses?</h2>
- 
-      <h3>The question</h3>
-      <p>
-        How do the Cleveland Cavaliers' average points, assists, rebounds,
-        and three-point shooting percentage differ between wins and losses
-        at home and on the road during the 2025–2026 NBA season?
-      </p>
- 
-      <h3>The approach</h3>
-      <p>
-        I used a Common Table Expression (CTE) to isolate Cleveland Cavaliers
-        game records and classify each game as home or away based on the
-        matchup. I then grouped the games by result and location, calculating
-        the average points, assists, rebounds, and three-point shooting
-        percentage for each combination.
-      </p>
-      <p>
-        I used aggregate functions with <code>GROUP BY</code> to compare
-        performance across the four categories: home wins, home losses,
-        away wins, and away losses. I also rounded the averages to two
-        decimal places to make the results easier to interpret.
-      </p>
- 
-<pre><code>WITH cavs_stats AS (
-    SELECT
-        team_name,
-        matchup,
-        TRIM(REGEXP_REPLACE(matchup, 'CLE|vs\.|@', '')) AS opponent,
-        CASE
-            WHEN matchup LIKE '% vs. %' THEN 'HOME'
-            ELSE 'AWAY'
-        END AS location,
-        wl,
-        pts,
-        ast,
-        reb,
-        fg3_pct
-    FROM nba_2025_2026_games
-    WHERE team_name = 'Cleveland Cavaliers'
-)
-SELECT
-    wl AS result,
-    location,
-    ROUND(AVG(pts), 2) AS avg_points,
-    ROUND(AVG(ast), 2) AS avg_assists,
-    ROUND(AVG(reb), 2) AS avg_rebounds,
-    ROUND(AVG(fg3_pct), 2) AS avg_3pt_percent
-FROM cavs_stats
-GROUP BY wl, location
-ORDER BY
-    FIELD(location, 'HOME', 'AWAY'),
-    FIELD(result, 'W', 'L');</code></pre>
- 
-      <h3>The result</h3>
-      <p>
-        The query produces four rows summarizing the Cavaliers' average
-        performance: home wins, home losses, away wins, and away losses.
-        Each row includes points, assists, rebounds, and three-point
-        shooting percentage, allowing direct comparisons between winning
-        and losing performances at different locations.
-      </p>
- 
-      <!-- RESULT TABLE: numbers come from the query output. -->
-      <div class="result">
-        <table>
-          <tr>
-            <th>result</th><th>location</th>
-            <th class="num">avg_points</th><th class="num">avg_assists</th>
-            <th class="num">avg_rebounds</th><th class="num">avg_3pt_percent</th>
-          </tr>
-          <tr><td>W</td><td>HOME</td><td class="num">124.67</td><td class="num">29.11</td><td class="num">44.81</td><td class="num">0.39</td></tr>
-          <tr><td>L</td><td>HOME</td><td class="num">108.57</td><td class="num">25.07</td><td class="num">43.36</td><td class="num">0.31</td></tr>
-          <tr><td>W</td><td>AWAY</td><td class="num">123.36</td><td class="num">29.96</td><td class="num">46.12</td><td class="num">0.37</td></tr>
-          <tr><td>L</td><td>AWAY</td><td class="num">114.44</td><td class="num">27.19</td><td class="num">42.06</td><td class="num">0.34</td></tr>
-        </table>
-      </div>
- 
-      <div class="takeaway">
-        <p><b>Takeaway:</b> By combining a CTE, conditional logic, aggregate functions, and grouping, I created a comparison of the Cavaliers' performance across home and away games. This analysis helps identify which statistical differences are associated with wins and losses and whether those patterns change depending on whether the game is played at home or away.</p>
-        <p>There are several things that stood out to me when looking at this data. First, when the Cavs win, regardless of whether they play at home or away, they average nearly 10 more points than their opponents. Specifically, at home, this may be attributed to their nearly 10 percentage-point increase in three-point shooting percentage in wins compared to home losses.</p>
-      </div>
-    </article>
+    </details> -->
 
-        <article class="entry" data-tool="SQL">
-      <div class="meta">
-        <time datetime="2026-10-09">Oct 9, 2026</time>
-        <span class="pill">SQL</span>
-      </div>
- 
-      <h2>Which Teams Did Donovan Mitchell Perform Best Against in the 2025–2026 NBA Regular Season?</h2>
- 
-      <h3>The question</h3>
-      <p>
-        How did Donovan Mitchell's scoring, three-point shooting, field-goal shooting, and playing time vary against different opponents during the 2025–2026 NBA regular season?
-      </p>
- 
-      <h3>The approach</h3>
-      <p>
-        I used a Common Table Expression (CTE) to isolate Donovan Mitchell's game-level statistics and identify each opponent from the matchup data. I joined the player box scores with the game records using the game ID and team abbreviation to match each performance to the correct game.
-      </p>
-      <p>
-        I then used aggregate functions, including <code>AVG()</code> and <code>COUNT()</code>, with <code>GROUP BY</code> to calculate his average performance and number of games against each opponent. Finally, I used <code>ORDER BY</code> to rank opponents by his average points per game.
-      </p>
- 
-<pre><code>WITH donovan_mitchell_stats AS (
-    SELECT 
-        CONCAT(box.firstName, ' ', box.familyName) AS player_name,
-        CASE
-            WHEN game.MATCHUP LIKE 'CLE %' 
-                THEN SUBSTRING_INDEX(game.MATCHUP, ' ', -1)
-            ELSE SUBSTRING_INDEX(game.MATCHUP, ' ', 1)
-        END AS opponent,
-        game.GAME_DATE AS game_date,
-        game.MATCHUP AS matchup,
-        game.WL AS result,
-        box.points AS pts,
-        box.threePointersMade AS threes_made,
-        box.threePointersPercentage AS three_pct,
-        box.fieldGoalsMade AS fgm,
-        box.fieldGoalsPercentage AS fg_pct,
-        box.minutes AS min
-    FROM nba_2025_2026_games AS game
-    LEFT JOIN cavaliers_2025_2026_game_by_game AS box
-        ON box.gameId = game.game_Id
-        AND box.teamTricode = game.TEAM_ABBREVIATION
-        AND box.personId = 1628378
-    WHERE game.TEAM_ABBREVIATION = 'CLE' AND box.minutes IS NOT NULL
-)
-SELECT 
-    player_name,
-    opponent,
-    COUNT(pts) AS games_played,
-    ROUND(AVG(pts), 2) AS avg_points,
-    ROUND(AVG(threes_made), 2) AS avg_threes_made,
-    ROUND(AVG(three_pct), 3) AS avg_three_pct,
-    ROUND(AVG(fgm), 2) AS avg_fgm,
-    ROUND(AVG(fg_pct), 3) AS avg_fg_pct,
-    ROUND(AVG(min), 2) AS avg_minutes
-FROM donovan_mitchell_stats
-GROUP BY player_name, opponent
-ORDER BY avg_points DESC;
-</code></pre>
- 
-      <h3>The result</h3>
-      <p>
-        The query groups Donovan Mitchell's performances by opponent and ranks the results by average points per game. The table also shows how many games contributed to each average, along with his shooting statistics and playing time. 
-      </p>
- 
-<table border="1" cellpadding="5" cellspacing="0">
-    <thead>
-        <tr>
-            <th>Player Name</th>
-            <th>Opponent</th>
-            <th>Games Played</th>
-            <th>Avg Points</th>
-            <th>Avg Threes Made</th>
-            <th>Avg Three Pct</th>
-            <th>Avg FGM</th>
-            <th>Avg FG Pct</th>
-            <th>Avg Minutes</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>IND</td>
-            <td>3</td>
-            <td>37.67</td>
-            <td>3.33</td>
-            <td>0.351</td>
-            <td>14.33</td>
-            <td>0.562</td>
-            <td>33.33</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>ORL</td>
-            <td>4</td>
-            <td>37.00</td>
-            <td>3.50</td>
-            <td>0.403</td>
-            <td>13.25</td>
-            <td>0.528</td>
-            <td>35.50</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>ATL</td>
-            <td>3</td>
-            <td>36.67</td>
-            <td>5.33</td>
-            <td>0.417</td>
-            <td>13.00</td>
-            <td>0.580</td>
-            <td>34.67</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>WAS</td>
-            <td>3</td>
-            <td>34.00</td>
-            <td>4.67</td>
-            <td>0.406</td>
-            <td>12.00</td>
-            <td>0.509</td>
-            <td>29.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>SAC</td>
-            <td>2</td>
-            <td>34.00</td>
-            <td>3.50</td>
-            <td>0.334</td>
-            <td>12.00</td>
-            <td>0.491</td>
-            <td>34.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>LAC</td>
-            <td>2</td>
-            <td>33.00</td>
-            <td>4.00</td>
-            <td>0.444</td>
-            <td>12.00</td>
-            <td>0.581</td>
-            <td>31.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>DEN</td>
-            <td>2</td>
-            <td>32.50</td>
-            <td>4.00</td>
-            <td>0.358</td>
-            <td>12.50</td>
-            <td>0.530</td>
-            <td>34.50</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>DET</td>
-            <td>2</td>
-            <td>32.50</td>
-            <td>2.50</td>
-            <td>0.410</td>
-            <td>11.50</td>
-            <td>0.599</td>
-            <td>31.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>MEM</td>
-            <td>1</td>
-            <td>30.00</td>
-            <td>4.00</td>
-            <td>0.308</td>
-            <td>10.00</td>
-            <td>0.476</td>
-            <td>32.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>NYK</td>
-            <td>3</td>
-            <td>29.33</td>
-            <td>2.67</td>
-            <td>0.305</td>
-            <td>9.67</td>
-            <td>0.413</td>
-            <td>32.67</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>MIN</td>
-            <td>2</td>
-            <td>29.00</td>
-            <td>3.00</td>
-            <td>0.325</td>
-            <td>9.50</td>
-            <td>0.464</td>
-            <td>33.50</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>PHI</td>
-            <td>4</td>
-            <td>27.75</td>
-            <td>3.75</td>
-            <td>0.383</td>
-            <td>8.50</td>
-            <td>0.472</td>
-            <td>34.25</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>UTA</td>
-            <td>2</td>
-            <td>27.50</td>
-            <td>3.50</td>
-            <td>0.410</td>
-            <td>8.50</td>
-            <td>0.473</td>
-            <td>34.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>GSW</td>
-            <td>2</td>
-            <td>27.00</td>
-            <td>5.50</td>
-            <td>0.536</td>
-            <td>9.00</td>
-            <td>0.462</td>
-            <td>35.50</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>NOP</td>
-            <td>2</td>
-            <td>27.00</td>
-            <td>2.50</td>
-            <td>0.354</td>
-            <td>10.00</td>
-            <td>0.543</td>
-            <td>34.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>MIL</td>
-            <td>3</td>
-            <td>26.67</td>
-            <td>2.00</td>
-            <td>0.292</td>
-            <td>9.00</td>
-            <td>0.457</td>
-            <td>33.67</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>BKN</td>
-            <td>2</td>
-            <td>26.00</td>
-            <td>4.00</td>
-            <td>0.550</td>
-            <td>8.50</td>
-            <td>0.625</td>
-            <td>27.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>CHA</td>
-            <td>4</td>
-            <td>25.75</td>
-            <td>2.75</td>
-            <td>0.293</td>
-            <td>8.25</td>
-            <td>0.404</td>
-            <td>34.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>DAL</td>
-            <td>2</td>
-            <td>25.00</td>
-            <td>2.50</td>
-            <td>0.307</td>
-            <td>10.50</td>
-            <td>0.552</td>
-            <td>33.50</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>PHX</td>
-            <td>2</td>
-            <td>25.00</td>
-            <td>3.50</td>
-            <td>0.473</td>
-            <td>8.00</td>
-            <td>0.528</td>
-            <td>28.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>TOR</td>
-            <td>2</td>
-            <td>24.00</td>
-            <td>2.50</td>
-            <td>0.236</td>
-            <td>6.50</td>
-            <td>0.344</td>
-            <td>34.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>POR</td>
-            <td>2</td>
-            <td>23.50</td>
-            <td>2.50</td>
-            <td>0.258</td>
-            <td>9.00</td>
-            <td>0.431</td>
-            <td>32.50</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>BOS</td>
-            <td>3</td>
-            <td>21.00</td>
-            <td>3.67</td>
-            <td>0.439</td>
-            <td>7.00</td>
-            <td>0.452</td>
-            <td>34.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>MIA</td>
-            <td>3</td>
-            <td>20.67</td>
-            <td>2.33</td>
-            <td>0.211</td>
-            <td>7.67</td>
-            <td>0.334</td>
-            <td>34.33</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>CHI</td>
-            <td>3</td>
-            <td>20.33</td>
-            <td>3.00</td>
-            <td>0.287</td>
-            <td>7.00</td>
-            <td>0.298</td>
-            <td>22.33</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>OKC</td>
-            <td>2</td>
-            <td>19.50</td>
-            <td>0.50</td>
-            <td>0.056</td>
-            <td>7.00</td>
-            <td>0.376</td>
-            <td>35.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>SAS</td>
-            <td>2</td>
-            <td>19.00</td>
-            <td>1.50</td>
-            <td>0.211</td>
-            <td>6.00</td>
-            <td>0.393</td>
-            <td>33.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>HOU</td>
-            <td>2</td>
-            <td>18.50</td>
-            <td>2.50</td>
-            <td>0.367</td>
-            <td>7.50</td>
-            <td>0.442</td>
-            <td>32.00</td>
-        </tr>
-        <tr>
-            <td>Donovan Mitchell</td>
-            <td>LAL</td>
-            <td>2</td>
-            <td>17.50</td>
-            <td>1.50</td>
-            <td>0.166</td>
-            <td>6.50</td>
-            <td>0.414</td>
-            <td>26.00</td>
-        </tr>
-    </tbody>
-</table> 
-      <div class="takeaway">
-       <p><b>Takeaway:</b>Donovan Mitchell averaged his most points against Indiana (37.67 across three games), followed by Orlando (37.00 across four games) and Atlanta (36.67 across three games). His three-point shooting was particularly strong against Golden State, where he averaged 5.50 made threes per game while shooting 53.6%. Brooklyn recorded his highest average field-goal percentage at 62.5%, although that figure was based on only two games. These comparisons demonstrate the value of analyzing multiple performance metrics together while considering sample size and playing time when drawing conclusions..</p> </div>
-    </article>
 
-     <article class="entry" data-tool="SQL">
-  <div class="meta">
-    <time datetime="2026-10-12">Oct 12, 2026</time>
-    <span class="pill">SQL</span>
-  </div>
+    <!-- ENTRY: Oct 12, back-to-backs -->
+    <details class="entry" data-tool="SQL" id="cavs-back-to-backs" open>
+      <summary>
+        <div class="meta">
+          <time datetime="2026-10-12">Oct 12, 2026</time>
+          <span class="pill">SQL</span>
+        </div>
+        <h2>Did the Cleveland Cavaliers Play Worse on Back-to-Backs?</h2>
+        <p class="teaser">Comparing 2025–2026 results by days of rest. Little evidence of a fatigue effect, though there were only 14 back-to-backs.</p>
+        <span class="chev" aria-hidden="true"></span>
+      </summary>
 
-  <h2>Did the Cleveland Cavaliers Play Worse on Back-to-Backs?</h2>
+      <div class="entry-body">
+        <h3>The question</h3>
+        <p>
+          Did days of rest affect how the Cleveland Cavaliers played in the
+          2025–2026 regular season? Specifically, how do their average points,
+          rebounds, steals, turnovers, effective field goal percentage (eFG%),
+          point margin, and win-loss record on the second night of a back-to-back
+          compare with games played on one day, two to three days, or four or more
+          days of rest?
+        </p>
 
-  <h3>The question</h3>
-  <p>
-    Did days of rest affect how the Cleveland Cavaliers played in the
-    2025–2026 regular season? Specifically, how do their average points,
-    rebounds, steals, turnovers, effective field goal percentage (eFG%),
-    point margin, and win-loss record on the second night of a back-to-back
-    compare with games played on one day, two to three days, or four or more
-    days of rest?
-  </p>
-
-  <h3>The approach</h3>
-  <p>
-    First, I built a temporary table of the Cavaliers' 82 regular-season
-    games, ordered by date, and used the <code>LAG()</code> window function
-    to calculate the days off since their previous game. I ordered by
-    <code>GAME_DATE</code> rather than <code>GAME_ID</code> because the IDs
-    for special games (opening night, Christmas, NBA Cup) are out of
-    sequence. Games were also labeled home or away from the matchup text.
-  </p>
-  <p>
-    Next, I used a CTE to sort each game into a rest bucket: back-to-back
-    (0 days off), 1 day, 2–3 days, or 4+ days. The 4+ bucket captures longer
-    breaks like the All-Star break. I joined the buckets to the game box
-    scores and grouped by bucket. eFG% is pooled, meaning total makes over
-    total attempts, so games with more shots count for more. I used point
-    margin (<code>PLUS_MINUS</code>) as the main outcome because it is more
-    stable than win/loss.
-  </p>
+        <h3>The approach</h3>
+        <p>
+          First, I built a temporary table of the Cavaliers' 82 regular-season
+          games, ordered by date, and used the <code>LAG()</code> window function
+          to calculate the days off since their previous game. I ordered by
+          <code>GAME_DATE</code> rather than <code>GAME_ID</code> because the IDs
+          for special games (opening night, Christmas, NBA Cup) are out of
+          sequence. Games were also labeled home or away from the matchup text.
+        </p>
+        <p>
+          Next, I used a CTE to sort each game into a rest bucket: back-to-back
+          (0 days off), 1 day, 2–3 days, or 4+ days. The 4+ bucket captures longer
+          breaks like the All-Star break. I joined the buckets to the game box
+          scores and grouped by bucket. eFG% is pooled, meaning total makes over
+          total attempts, so games with more shots count for more. I used point
+          margin (<code>PLUS_MINUS</code>) as the main outcome because it is more
+          stable than win/loss.
+        </p>
 
 <pre><code>CREATE temporary table CAVS_GAMES AS(
 select GAME_ID , GAME_DATE , TEAM_NAME, MATCHUP,
@@ -709,58 +256,278 @@ WHERE g.TEAM_NAME = 'Cleveland Cavaliers'
 GROUP BY rd.rest
 ORDER BY rd.rest;</code></pre>
 
-  <h3>The result</h3>
-  <p>
-    The query returns five rows: the four rest buckets plus a
-    <code>NULL</code> row, which is the season opener (no prior game, so no
-    rest value). The 82 games split into 14 back-to-backs, 54 games on one
-    day of rest, 10 on two to three days, 3 on four or more, and the opener.
-  </p>
+        <h3>The result</h3>
+        <p>
+          The query returns five rows: the four rest buckets plus a
+          <code>NULL</code> row, which is the season opener (no prior game, so no
+          rest value). The 82 games split into 14 back-to-backs, 54 games on one
+          day of rest, 10 on two to three days, 3 on four or more, and the opener.
+        </p>
 
-  <div class="result">
-    <table border="1" cellpadding="5" cellspacing="0">
-      <thead>
+        <div class="result">
+          <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
+              <tr>
+                <th>rest_bucket</th>
+                <th>games</th>
+                <th>avg_pts</th>
+                <th>avg_reb</th>
+                <th>avg_stl</th>
+                <th>avg_plus_minus</th>
+                <th>efg_pct</th>
+                <th>avg_tov</th>
+                <th>wins</th>
+                <th>losses</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>NULL</td><td>1</td><td>111.0</td><td>32.0</td><td>8.0</td><td>-8</td><td>0.576</td><td>15.0</td><td>0</td><td>1</td></tr>
+              <tr><td>1 day</td><td>54</td><td>119.6</td><td>45.3</td><td>8.6</td><td>4.56</td><td>0.562</td><td>13.8</td><td>35</td><td>19</td></tr>
+              <tr><td>2-3 days</td><td>10</td><td>124.0</td><td>41.6</td><td>9.1</td><td>2.5</td><td>0.579</td><td>13.3</td><td>7</td><td>3</td></tr>
+              <tr><td>4+ days</td><td>3</td><td>113.3</td><td>48.7</td><td>7.3</td><td>7</td><td>0.520</td><td>9.0</td><td>2</td><td>1</td></tr>
+              <tr><td>B2B</td><td>14</td><td>118.0</td><td>43.1</td><td>7.9</td><td>3.79</td><td>0.552</td><td>12.2</td><td>8</td><td>6</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="takeaway">
+          <p><b>Takeaway:</b> I found little evidence that the Cavaliers played
+          worse on the second night of a back-to-back. Their average margin was
+          +3.79 on back-to-backs versus +4.56 with one day of rest, a gap of less
+          than one point. Their eFG% was close (.552 vs. .562), and they actually
+          committed fewer turnovers on back-to-backs (12.2 per game vs. 13.8). The
+          clearest gap is in record: 8-6 (57%) on back-to-backs versus 35-19 (65%)
+          with one day of rest.</p>
+          <p>Rest did not translate into better results either. The 2-3 day
+          group had the best scoring (124.0 points) and eFG% (.579), but its average
+          margin (+2.5) was lower than the back-to-back group's. The 4+ day group
+          had the highest margin (+7), but that is only three games, and the
+          <code>NULL</code> row is the single season opener, so neither supports a
+          conclusion.</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- ENTRY: Oct 9, Donovan Mitchell -->
+    <details class="entry" data-tool="SQL" id="mitchell-vs-opponents">
+      <summary>
+        <div class="meta">
+          <time datetime="2026-10-09">Oct 9, 2026</time>
+          <span class="pill">SQL</span>
+        </div>
+        <h2>Which Teams Did Donovan Mitchell Perform Best Against in the 2025–2026 NBA Regular Season?</h2>
+        <p class="teaser">His scoring was highest against Indiana, Orlando, and Atlanta, though most opponents have only two to four games.</p>
+        <span class="chev" aria-hidden="true"></span>
+      </summary>
+
+      <div class="entry-body">
+        <h3>The question</h3>
+        <p>
+          How did Donovan Mitchell's scoring, three-point shooting, field-goal shooting, and playing time vary against different opponents during the 2025–2026 NBA regular season?
+        </p>
+
+        <h3>The approach</h3>
+        <p>
+          I used a Common Table Expression (CTE) to isolate Donovan Mitchell's game-level statistics and identify each opponent from the matchup data. I joined the player box scores with the game records using the game ID and team abbreviation to match each performance to the correct game.
+        </p>
+        <p>
+          I then used aggregate functions, including <code>AVG()</code> and <code>COUNT()</code>, with <code>GROUP BY</code> to calculate his average performance and number of games against each opponent. Finally, I used <code>ORDER BY</code> to rank opponents by his average points per game.
+        </p>
+
+<pre><code>WITH donovan_mitchell_stats AS (
+    SELECT 
+        CONCAT(box.firstName, ' ', box.familyName) AS player_name,
+        CASE
+            WHEN game.MATCHUP LIKE 'CLE %' 
+                THEN SUBSTRING_INDEX(game.MATCHUP, ' ', -1)
+            ELSE SUBSTRING_INDEX(game.MATCHUP, ' ', 1)
+        END AS opponent,
+        game.GAME_DATE AS game_date,
+        game.MATCHUP AS matchup,
+        game.WL AS result,
+        box.points AS pts,
+        box.threePointersMade AS threes_made,
+        box.threePointersPercentage AS three_pct,
+        box.fieldGoalsMade AS fgm,
+        box.fieldGoalsPercentage AS fg_pct,
+        box.minutes AS min
+    FROM nba_2025_2026_games AS game
+    LEFT JOIN cavaliers_2025_2026_game_by_game AS box
+        ON box.gameId = game.game_Id
+        AND box.teamTricode = game.TEAM_ABBREVIATION
+        AND box.personId = 1628378
+    WHERE game.TEAM_ABBREVIATION = 'CLE' AND box.minutes IS NOT NULL
+)
+SELECT 
+    player_name,
+    opponent,
+    COUNT(pts) AS games_played,
+    ROUND(AVG(pts), 2) AS avg_points,
+    ROUND(AVG(threes_made), 2) AS avg_threes_made,
+    ROUND(AVG(three_pct), 3) AS avg_three_pct,
+    ROUND(AVG(fgm), 2) AS avg_fgm,
+    ROUND(AVG(fg_pct), 3) AS avg_fg_pct,
+    ROUND(AVG(min), 2) AS avg_minutes
+FROM donovan_mitchell_stats
+GROUP BY player_name, opponent
+ORDER BY avg_points DESC;
+</code></pre>
+
+        <h3>The result</h3>
+        <p>
+          The query groups Donovan Mitchell's performances by opponent and ranks the results by average points per game. The table also shows how many games contributed to each average, along with his shooting statistics and playing time.
+        </p>
+
+        <div class="result">
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
         <tr>
-          <th>rest_bucket</th>
-          <th>games</th>
-          <th>avg_pts</th>
-          <th>avg_reb</th>
-          <th>avg_stl</th>
-          <th>avg_plus_minus</th>
-          <th>efg_pct</th>
-          <th>avg_tov</th>
-          <th>wins</th>
-          <th>losses</th>
+            <th>Player Name</th>
+            <th>Opponent</th>
+            <th>Games Played</th>
+            <th>Avg Points</th>
+            <th>Avg Threes Made</th>
+            <th>Avg Three Pct</th>
+            <th>Avg FGM</th>
+            <th>Avg FG Pct</th>
+            <th>Avg Minutes</th>
         </tr>
-      </thead>
-      <tbody>
-        <tr><td>NULL</td><td>1</td><td>111.0</td><td>32.0</td><td>8.0</td><td>-8</td><td>0.576</td><td>15.0</td><td>0</td><td>1</td></tr>
-        <tr><td>1 day</td><td>54</td><td>119.6</td><td>45.3</td><td>8.6</td><td>4.56</td><td>0.562</td><td>13.8</td><td>35</td><td>19</td></tr>
-        <tr><td>2-3 days</td><td>10</td><td>124.0</td><td>41.6</td><td>9.1</td><td>2.5</td><td>0.579</td><td>13.3</td><td>7</td><td>3</td></tr>
-        <tr><td>4+ days</td><td>3</td><td>113.3</td><td>48.7</td><td>7.3</td><td>7</td><td>0.520</td><td>9.0</td><td>2</td><td>1</td></tr>
-        <tr><td>B2B</td><td>14</td><td>118.0</td><td>43.1</td><td>7.9</td><td>3.79</td><td>0.552</td><td>12.2</td><td>8</td><td>6</td></tr>
-      </tbody>
-    </table>
-  </div>
+    </thead>
+    <tbody>
+        <tr><td>Donovan Mitchell</td><td>IND</td><td>3</td><td>37.67</td><td>3.33</td><td>0.351</td><td>14.33</td><td>0.562</td><td>33.33</td></tr>
+        <tr><td>Donovan Mitchell</td><td>ORL</td><td>4</td><td>37.00</td><td>3.50</td><td>0.403</td><td>13.25</td><td>0.528</td><td>35.50</td></tr>
+        <tr><td>Donovan Mitchell</td><td>ATL</td><td>3</td><td>36.67</td><td>5.33</td><td>0.417</td><td>13.00</td><td>0.580</td><td>34.67</td></tr>
+        <tr><td>Donovan Mitchell</td><td>WAS</td><td>3</td><td>34.00</td><td>4.67</td><td>0.406</td><td>12.00</td><td>0.509</td><td>29.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>SAC</td><td>2</td><td>34.00</td><td>3.50</td><td>0.334</td><td>12.00</td><td>0.491</td><td>34.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>LAC</td><td>2</td><td>33.00</td><td>4.00</td><td>0.444</td><td>12.00</td><td>0.581</td><td>31.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>DEN</td><td>2</td><td>32.50</td><td>4.00</td><td>0.358</td><td>12.50</td><td>0.530</td><td>34.50</td></tr>
+        <tr><td>Donovan Mitchell</td><td>DET</td><td>2</td><td>32.50</td><td>2.50</td><td>0.410</td><td>11.50</td><td>0.599</td><td>31.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>MEM</td><td>1</td><td>30.00</td><td>4.00</td><td>0.308</td><td>10.00</td><td>0.476</td><td>32.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>NYK</td><td>3</td><td>29.33</td><td>2.67</td><td>0.305</td><td>9.67</td><td>0.413</td><td>32.67</td></tr>
+        <tr><td>Donovan Mitchell</td><td>MIN</td><td>2</td><td>29.00</td><td>3.00</td><td>0.325</td><td>9.50</td><td>0.464</td><td>33.50</td></tr>
+        <tr><td>Donovan Mitchell</td><td>PHI</td><td>4</td><td>27.75</td><td>3.75</td><td>0.383</td><td>8.50</td><td>0.472</td><td>34.25</td></tr>
+        <tr><td>Donovan Mitchell</td><td>UTA</td><td>2</td><td>27.50</td><td>3.50</td><td>0.410</td><td>8.50</td><td>0.473</td><td>34.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>GSW</td><td>2</td><td>27.00</td><td>5.50</td><td>0.536</td><td>9.00</td><td>0.462</td><td>35.50</td></tr>
+        <tr><td>Donovan Mitchell</td><td>NOP</td><td>2</td><td>27.00</td><td>2.50</td><td>0.354</td><td>10.00</td><td>0.543</td><td>34.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>MIL</td><td>3</td><td>26.67</td><td>2.00</td><td>0.292</td><td>9.00</td><td>0.457</td><td>33.67</td></tr>
+        <tr><td>Donovan Mitchell</td><td>BKN</td><td>2</td><td>26.00</td><td>4.00</td><td>0.550</td><td>8.50</td><td>0.625</td><td>27.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>CHA</td><td>4</td><td>25.75</td><td>2.75</td><td>0.293</td><td>8.25</td><td>0.404</td><td>34.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>DAL</td><td>2</td><td>25.00</td><td>2.50</td><td>0.307</td><td>10.50</td><td>0.552</td><td>33.50</td></tr>
+        <tr><td>Donovan Mitchell</td><td>PHX</td><td>2</td><td>25.00</td><td>3.50</td><td>0.473</td><td>8.00</td><td>0.528</td><td>28.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>TOR</td><td>2</td><td>24.00</td><td>2.50</td><td>0.236</td><td>6.50</td><td>0.344</td><td>34.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>POR</td><td>2</td><td>23.50</td><td>2.50</td><td>0.258</td><td>9.00</td><td>0.431</td><td>32.50</td></tr>
+        <tr><td>Donovan Mitchell</td><td>BOS</td><td>3</td><td>21.00</td><td>3.67</td><td>0.439</td><td>7.00</td><td>0.452</td><td>34.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>MIA</td><td>3</td><td>20.67</td><td>2.33</td><td>0.211</td><td>7.67</td><td>0.334</td><td>34.33</td></tr>
+        <tr><td>Donovan Mitchell</td><td>CHI</td><td>3</td><td>20.33</td><td>3.00</td><td>0.287</td><td>7.00</td><td>0.298</td><td>22.33</td></tr>
+        <tr><td>Donovan Mitchell</td><td>OKC</td><td>2</td><td>19.50</td><td>0.50</td><td>0.056</td><td>7.00</td><td>0.376</td><td>35.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>SAS</td><td>2</td><td>19.00</td><td>1.50</td><td>0.211</td><td>6.00</td><td>0.393</td><td>33.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>HOU</td><td>2</td><td>18.50</td><td>2.50</td><td>0.367</td><td>7.50</td><td>0.442</td><td>32.00</td></tr>
+        <tr><td>Donovan Mitchell</td><td>LAL</td><td>2</td><td>17.50</td><td>1.50</td><td>0.166</td><td>6.50</td><td>0.414</td><td>26.00</td></tr>
+    </tbody>
+</table>
+        </div>
 
-  <div class="takeaway">
-    <p><b>Takeaway:</b> I found little evidence that the Cavaliers played
-    worse on the second night of a back-to-back. Their average margin was
-    +3.79 on back-to-backs versus +4.56 with one day of rest, a gap of less
-    than one point. Their eFG% was close (.552 vs. .562), and they actually
-    committed fewer turnovers on back-to-backs (12.2 per game vs. 13.8). The
-    clearest gap is in record: 8-6 (57%) on back-to-backs versus 35-19 (65%)
-    with one day of rest.</p>
-    <p>Rest did not translate into better results either. The 2-3 day
-    group had the best scoring (124.0 points) and eFG% (.579), but its average
-    margin (+2.5) was lower than the back-to-back group's. The 4+ day group
-    had the highest margin (+7), but that is only three games, and the
-    <code>NULL</code> row is the single season opener, so neither supports a
-    conclusion.</p>
-  </div>
-</article>
+        <div class="takeaway">
+          <p><b>Takeaway:</b> Donovan Mitchell averaged his most points against Indiana (37.67 across three games), followed by Orlando (37.00 across four games) and Atlanta (36.67 across three games). His three-point shooting was particularly strong against Golden State, where he averaged 5.50 made threes per game while shooting 53.6%. Brooklyn recorded his highest average field-goal percentage at 62.5%, although that figure was based on only two games. These comparisons demonstrate the value of analyzing multiple performance metrics together while considering sample size and playing time when drawing conclusions.</p>
+        </div>
+      </div>
+    </details>
 
+    <!-- ENTRY: Oct 8, home and away wins and losses -->
+    <details class="entry" data-tool="SQL" id="cavs-home-away">
+      <summary>
+        <div class="meta">
+          <time datetime="2026-10-09">Oct 8, 2026</time>
+          <span class="pill">SQL</span>
+        </div>
+        <h2>How Do the Cleveland Cavaliers Perform in Home and Away Wins and Losses?</h2>
+        <p class="teaser">Average points, assists, rebounds, and three-point shooting in wins and losses, at home and on the road.</p>
+        <span class="chev" aria-hidden="true"></span>
+      </summary>
 
+      <div class="entry-body">
+        <h3>The question</h3>
+        <p>
+          How do the Cleveland Cavaliers' average points, assists, rebounds,
+          and three-point shooting percentage differ between wins and losses
+          at home and on the road during the 2025–2026 NBA season?
+        </p>
+
+        <h3>The approach</h3>
+        <p>
+          I used a Common Table Expression (CTE) to isolate Cleveland Cavaliers
+          game records and classify each game as home or away based on the
+          matchup. I then grouped the games by result and location, calculating
+          the average points, assists, rebounds, and three-point shooting
+          percentage for each combination.
+        </p>
+        <p>
+          I used aggregate functions with <code>GROUP BY</code> to compare
+          performance across the four categories: home wins, home losses,
+          away wins, and away losses. I also rounded the averages to two
+          decimal places to make the results easier to interpret.
+        </p>
+
+<pre><code>WITH cavs_stats AS (
+    SELECT
+        team_name,
+        matchup,
+        TRIM(REGEXP_REPLACE(matchup, 'CLE|vs\.|@', '')) AS opponent,
+        CASE
+            WHEN matchup LIKE '% vs. %' THEN 'HOME'
+            ELSE 'AWAY'
+        END AS location,
+        wl,
+        pts,
+        ast,
+        reb,
+        fg3_pct
+    FROM nba_2025_2026_games
+    WHERE team_name = 'Cleveland Cavaliers'
+)
+SELECT
+    wl AS result,
+    location,
+    ROUND(AVG(pts), 2) AS avg_points,
+    ROUND(AVG(ast), 2) AS avg_assists,
+    ROUND(AVG(reb), 2) AS avg_rebounds,
+    ROUND(AVG(fg3_pct), 2) AS avg_3pt_percent
+FROM cavs_stats
+GROUP BY wl, location
+ORDER BY
+    FIELD(location, 'HOME', 'AWAY'),
+    FIELD(result, 'W', 'L');</code></pre>
+
+        <h3>The result</h3>
+        <p>
+          The query produces four rows summarizing the Cavaliers' average
+          performance: home wins, home losses, away wins, and away losses.
+          Each row includes points, assists, rebounds, and three-point
+          shooting percentage, allowing direct comparisons between winning
+          and losing performances at different locations.
+        </p>
+
+        <!-- RESULT TABLE: numbers come from the query output. -->
+        <div class="result">
+          <table>
+            <tr>
+              <th>result</th><th>location</th>
+              <th class="num">avg_points</th><th class="num">avg_assists</th>
+              <th class="num">avg_rebounds</th><th class="num">avg_3pt_percent</th>
+            </tr>
+            <tr><td>W</td><td>HOME</td><td class="num">124.67</td><td class="num">29.11</td><td class="num">44.81</td><td class="num">0.39</td></tr>
+            <tr><td>L</td><td>HOME</td><td class="num">108.57</td><td class="num">25.07</td><td class="num">43.36</td><td class="num">0.31</td></tr>
+            <tr><td>W</td><td>AWAY</td><td class="num">123.36</td><td class="num">29.96</td><td class="num">46.12</td><td class="num">0.37</td></tr>
+            <tr><td>L</td><td>AWAY</td><td class="num">114.44</td><td class="num">27.19</td><td class="num">42.06</td><td class="num">0.34</td></tr>
+          </table>
+        </div>
+
+        <div class="takeaway">
+          <p><b>Takeaway:</b> By combining a CTE, conditional logic, aggregate functions, and grouping, I created a comparison of the Cavaliers' performance across home and away games. This analysis helps identify which statistical differences are associated with wins and losses and whether those patterns change depending on whether the game is played at home or away.</p>
+          <p>There are several things that stood out to me when looking at this data. First, when the Cavs win, regardless of whether they play at home or away, they average nearly 10 more points than their opponents. Specifically, at home, this may be attributed to their nearly 10 percentage-point increase in three-point shooting percentage in wins compared to home losses.</p>
+        </div>
+      </div>
+    </details>
 
   </div>
   <p class="empty" id="empty" hidden>No entries for that tool yet.</p>
@@ -773,6 +540,8 @@ ORDER BY rd.rest;</code></pre>
   var buttons=document.querySelectorAll('.filters button');
   var entries=document.querySelectorAll('#entries .entry');
   var empty=document.getElementById('empty');
+
+  // Tool filter
   buttons.forEach(function(btn){
     btn.addEventListener('click',function(){
       var f=btn.getAttribute('data-filter');
@@ -786,6 +555,21 @@ ORDER BY rd.rest;</code></pre>
       empty.hidden=shown>0;
     });
   });
+
+  // Expand / collapse all
+  function setAll(open){entries.forEach(function(e){e.open=open})}
+  document.getElementById('expand').addEventListener('click',function(){setAll(true)});
+  document.getElementById('collapse').addEventListener('click',function(){setAll(false)});
+
+  // Open the entry named in the URL, e.g. blog.html#mitchell-vs-opponents
+  function openFromHash(){
+    var id=location.hash.slice(1);
+    if(!id)return;
+    var el=document.getElementById(id);
+    if(el&&el.tagName==='DETAILS'){el.hidden=false;el.open=true;el.scrollIntoView();}
+  }
+  window.addEventListener('hashchange',openFromHash);
+  openFromHash();
 })();
 </script>
 </body>
