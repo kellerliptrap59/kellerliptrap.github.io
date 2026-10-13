@@ -529,6 +529,129 @@ ORDER BY
       </div>
     </details>
 
+	      <!-- ENTRY: Oct 13, teams above league average -->
+<details class="entry" data-tool="Python" id="nba-team-averages">
+  <summary>
+    <div class="meta">
+      <time datetime="2026-10-13">Oct 13, 2026</time>
+      <span class="pill">Python</span>
+    </div>
+    <h2>Which NBA Teams Outperformed League-Wide Averages in Five Key Statistics?</h2>
+    <p class="teaser">Comparing team averages for points, rebounds, assists, steals, and blocks during the 2025–2026 NBA season.</p>
+    <span class="chev" aria-hidden="true"></span>
+  </summary>
+
+  <div class="entry-body">
+    <h3>The question</h3>
+    <p>
+      Which NBA teams averaged above the league-wide averages in points,
+      rebounds, assists, steals, and blocks during the 2025–2026 season?
+    </p>
+
+    <h3>The approach</h3>
+    <p>
+      Using pandas, I grouped the game-level data by team and calculated
+      each team's average across five statistical categories. I then
+      calculated the league-wide averages for the same categories and
+      compared each team's performance against those benchmarks.
+    </p>
+    <p>
+      Finally, I filtered the results to identify teams that exceeded
+      the league-wide average in all five categories simultaneously.
+      This approach allowed me to compare team performance using
+      consistent statistical benchmarks.
+    </p>
+
+<pre><code>import pandas as pd
+
+df = pd.read_csv("nba_2025_2026_games.csv")
+
+stats = ["PTS", "REB", "AST", "STL", "BLK"]
+
+team_averages = (
+    df.groupby("TEAM_NAME")[stats]
+    .mean(numeric_only=True)
+    .round(2)
+    .reset_index()
+)
+
+nba_averages = (
+    df[stats]
+    .mean(numeric_only=True)
+    .round(2)
+)
+
+above_avg_teams = team_averages[
+    (team_averages["PTS"] > nba_averages["PTS"]) &
+    (team_averages["REB"] > nba_averages["REB"]) &
+    (team_averages["AST"] > nba_averages["AST"]) &
+    (team_averages["STL"] > nba_averages["STL"]) &
+    (team_averages["BLK"] > nba_averages["BLK"])
+]
+
+print(above_avg_teams)
+print("League-wide averages:")
+print(nba_averages)</code></pre>
+
+    <h3>The results</h3>
+    <p>
+      Only two teams exceeded the league-wide averages in all five
+      categories: the Cleveland Cavaliers and Detroit Pistons.
+      Both teams averaged more points, rebounds, assists, steals,
+      and blocks than the league-wide benchmarks.
+    </p>
+
+    <div class="result">
+      <table>
+        <tr>
+          <th>Team</th>
+          <th class="num">PTS</th>
+          <th class="num">REB</th>
+          <th class="num">AST</th>
+          <th class="num">STL</th>
+          <th class="num">BLK</th>
+        </tr>
+        <tr>
+          <td>Cleveland Cavaliers</td>
+          <td class="num">119.52</td>
+          <td class="num">44.43</td>
+          <td class="num">28.30</td>
+          <td class="num">8.50</td>
+          <td class="num">4.99</td>
+        </tr>
+        <tr>
+          <td>Detroit Pistons</td>
+          <td class="num">117.77</td>
+          <td class="num">45.56</td>
+          <td class="num">27.82</td>
+          <td class="num">10.44</td>
+          <td class="num">6.38</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>League-wide averages</h3>
+    <div class="result">
+      <table>
+        <tr>
+          <th>Statistic</th>
+          <th class="num">League Average</th>
+        </tr>
+        <tr><td>Points</td><td class="num">115.61</td></tr>
+        <tr><td>Rebounds</td><td class="num">43.77</td></tr>
+        <tr><td>Assists</td><td class="num">26.74</td></tr>
+        <tr><td>Steals</td><td class="num">8.42</td></tr>
+        <tr><td>Blocks</td><td class="num">4.84</td></tr>
+      </table>
+    </div>
+
+    <div class="takeaway">
+      <p><b>Takeaway:</b> The Cleveland Cavaliers and Detroit Pistons were the only teams to average above the league-wide benchmarks in all five statistical categories. The Cavaliers led the two teams in scoring and assists, averaging 119.52 points and 28.30 assists per game. Detroit stood out defensively, averaging 10.44 steals and 6.38 blocks per game, the higher figures of the two teams in both categories.</p>
+      <p>This analysis demonstrates how Python and pandas can be used to group data, calculate averages, and apply multiple filtering conditions to identify teams that meet specific performance criteria. Comparing several statistics at once provides a broader view of team performance than evaluating any single metric in isolation.</p>
+    </div>
+  </div>
+</details>
+
   </div>
   <p class="empty" id="empty" hidden>No entries for that tool yet.</p>
 </main>
