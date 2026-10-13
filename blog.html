@@ -218,25 +218,12 @@ player_totals = (
     .sum(numeric_only=True)
     .reset_index()
 )
+player_totals["points_rank"] = player_totals["PTS"].rank(method="dense", ascending=False)
+player_totals["assists_rank"] = player_totals["AST"].rank(method="dense", ascending=False)
+player_totals["rebounds_rank"] = player_totals["REB"].rank(method="dense", ascending=False)
 
-player_totals["points_rank"] = player_totals["PTS"].rank(
-    method="dense", ascending=False
-)
-player_totals["assists_rank"] = player_totals["AST"].rank(
-    method="dense", ascending=False
-)
-player_totals["rebounds_rank"] = player_totals["REB"].rank(
-    method="dense", ascending=False
-)
-
-top_30_all_three = player_totals[
-    (player_totals["points_rank"] <= 30)
-    & (player_totals["assists_rank"] <= 30)
-    & (player_totals["rebounds_rank"] <= 30)
-]
-
-print("Players ranked in the top 30 in points, assists, and rebounds:")
-print(top_30_all_three)</code></pre>
+print("Player where they rank in top 30 in points, assists, and rebounds:")
+print(player_totals[(player_totals["points_rank"] <= 30) & (player_totals["assists_rank"] <= 30) & (player_totals["rebounds_rank"] <= 30)]))</code></pre>
 
     <h3>The results</h3>
     <p>
