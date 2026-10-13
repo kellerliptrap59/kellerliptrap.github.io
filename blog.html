@@ -174,7 +174,162 @@ ORDER BY order_count DESC;</code></pre>
         <p class="takeaway"><b>Takeaway:</b> <code>WHERE</code> filters rows before grouping, and <code>HAVING</code> filters groups after. (Sample entry for illustration.)</p>
       </div>
     </details> -->
+```html
+<!-- ENTRY: Oct 13, Players in top 30 for points, rebounds, assists -->
+<details class="entry" data-tool="Python" id="nba-player-ranking">
+  <summary>
+    <div class="meta">
+      <time datetime="2026-10-13">Oct 13, 2026</time>
+      <span class="pill">Python</span>
+    </div>
+    <h2>Which NBA players ranked in the top 30 for points, rebounds, and assists?</h2>
+    <p class="teaser">Identifying players who ranked in the top 30 across three major statistical categories during the 2025–2026 NBA regular season.</p>
+    <span class="chev" aria-hidden="true"></span>
+  </summary>
 
+  <div class="entry-body">
+    <h3>The question</h3>
+    <p>
+      Which NBA players ranked in the top 30 in total points, assists,
+      and rebounds during the 2025–2026 regular season?
+    </p>
+
+    <h3>The approach</h3>
+    <p>
+      Using pandas, I filtered the data to include regular-season games
+      and grouped the player game logs by player name. I then summed
+      points, assists, and rebounds to calculate each player's season
+      totals across all games in the dataset.
+    </p>
+    <p>
+      Next, I used pandas' <code>rank()</code> method with
+      <code>method="dense"</code> to rank players in each statistical
+      category. Dense ranking assigns the same rank to tied values
+      without skipping the next rank. Finally, I filtered the results
+      to include only players ranked in the top 30 for all three
+      categories simultaneously.
+    </p>
+
+    <pre><code>games = pd.read_csv("nba_player_game_logs_2025_26.csv")
+
+player_totals = (
+    games[games["SEASON_TYPE"] == "Regular Season"]
+    .groupby("PLAYER_NAME")[["PTS", "AST", "REB"]]
+    .sum(numeric_only=True)
+    .reset_index()
+)
+
+player_totals["points_rank"] = player_totals["PTS"].rank(
+    method="dense", ascending=False
+)
+player_totals["assists_rank"] = player_totals["AST"].rank(
+    method="dense", ascending=False
+)
+player_totals["rebounds_rank"] = player_totals["REB"].rank(
+    method="dense", ascending=False
+)
+
+top_30_all_three = player_totals[
+    (player_totals["points_rank"] <= 30)
+    & (player_totals["assists_rank"] <= 30)
+    & (player_totals["rebounds_rank"] <= 30)
+]
+
+print("Players ranked in the top 30 in points, assists, and rebounds:")
+print(top_30_all_three)</code></pre>
+
+    <h3>The results</h3>
+    <p>
+      Six players ranked in the top 30 across all three categories:
+      points, assists, and rebounds. Nikola Jokić and Jalen Johnson
+      stood out in assists and rebounds, while Luka Dončić ranked
+      first in total points and sixth in assists.
+    </p>
+
+    <div class="result">
+      <table>
+        <tr>
+          <th>Player</th>
+          <th class="num">Points</th>
+          <th class="num">PTS Rank</th>
+          <th class="num">Assists</th>
+          <th class="num">AST Rank</th>
+          <th class="num">Rebounds</th>
+          <th class="num">REB Rank</th>
+        </tr>
+        <tr>
+          <td>Alperen Sengun</td>
+          <td class="num">1,466</td>
+          <td class="num">28</td>
+          <td class="num">445</td>
+          <td class="num">16</td>
+          <td class="num">640</td>
+          <td class="num">10</td>
+        </tr>
+        <tr>
+          <td>Jalen Johnson</td>
+          <td class="num">1,621</td>
+          <td class="num">18</td>
+          <td class="num">566</td>
+          <td class="num">3</td>
+          <td class="num">740</td>
+          <td class="num">5</td>
+        </tr>
+        <tr>
+          <td>Julius Randle</td>
+          <td class="num">1,667</td>
+          <td class="num">13</td>
+          <td class="num">398</td>
+          <td class="num">28</td>
+          <td class="num">532</td>
+          <td class="num">25</td>
+        </tr>
+        <tr>
+          <td>Luka Dončić</td>
+          <td class="num">2,143</td>
+          <td class="num">1</td>
+          <td class="num">530</td>
+          <td class="num">6</td>
+          <td class="num">495</td>
+          <td class="num">30</td>
+        </tr>
+        <tr>
+          <td>Nikola Jokić</td>
+          <td class="num">1,799</td>
+          <td class="num">10</td>
+          <td class="num">697</td>
+          <td class="num">1</td>
+          <td class="num">836</td>
+          <td class="num">4</td>
+        </tr>
+        <tr>
+          <td>Scottie Barnes</td>
+          <td class="num">1,448</td>
+          <td class="num">29</td>
+          <td class="num">474</td>
+          <td class="num">11</td>
+          <td class="num">600</td>
+          <td class="num">16</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Key findings</h3>
+    <div class="takeaway">
+      <p>
+        <b>Takeaway:</b> Six players ranked in the top 30 in all three categories. Nikola Jokić was the only player to rank in the top 10 in points, assists, and rebounds, placing 10th in points, 1st in assists, and 4th in rebounds. Jalen Johnson was the only player to rank in the top 20 across all three categories, placing 18th in points, 3rd in assists, and 5th in rebounds. Luka Dončić led the group in total scoring with 2,143 points and ranked 6th in assists.
+      </p>
+      <p>
+        This analysis demonstrates how Python and pandas can aggregate
+        game-level data into season totals, apply dense rankings, and
+        filter results using multiple conditions. Combining rankings
+        across several statistics helps identify players who contribute
+        across multiple areas rather than excelling in only one category.
+      </p>
+    </div>
+  </div>
+</details>
+```
 
     <!-- ENTRY: Oct 13, teams above league average -->
     <details class="entry" data-tool="Python" id="nba-team-averages">
@@ -209,8 +364,7 @@ ORDER BY order_count DESC;</code></pre>
           consistent statistical benchmarks.
         </p>
 
-<pre><code>import pandas as pd
-
+<pre><code>
 df = pd.read_csv("nba_2025_2026_games.csv")
 
 stats = ["PTS", "REB", "AST", "STL", "BLK"]
