@@ -70,3 +70,20 @@ left join cavaliers_2025_2026_game_by_game cavs
 WHERE cavs.minutes IS NOT NULL AND personId = 201935 AND TEAM_NAME = 'Cleveland Cavaliers';
 ```
 
+
+```sql stats rank
+
+
+with cavs_stat_ranks as (
+select row_number() over (order by nameI asc) ID,
+nameI, 
+avg(points) avg_points, rank() over (order by avg(points) desc) avg_points_rank,
+avg(assists) avg_assists, rank() over (order by avg(assists) desc) avg_assist_rank,
+avg(reboundsTotal) avg_rebounds, rank() over (order by avg(reboundsTotal) desc) avg_reb_rank
+from cavaliers_2025_2026_game_by_game
+group by nameI
+)
+select nameI, avg_points, avg_assists, avg_rebounds
+from cavs_stat_ranks
+where avg_points_rank <= 5 and avg_assist_rank <=5 and avg_reb_rank <=5
+```
