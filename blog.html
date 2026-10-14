@@ -215,6 +215,20 @@ ORDER BY order_count DESC;</code></pre>
       lasted beyond regulation.
     </p>
 
+	   <pre><code>with cavs_games as (
+select *,
+ROW_NUMBER() OVER (
+            PARTITION BY SEASON
+            ORDER BY GAME_DATE ASC
+        ) AS home_game_number
+from cavs_last_10_seasons_box_scores
+where SEASON_TYPE <> 'Playoffs' and MATCHUP like '% vs. %'
+)
+select GAME_DATE,MATCHUP, PTS, FG_PCT, FG3_PCT, REB, AST, STL, BLK, TOV, WL, PLUS_MINUS , MIN
+from cavs_games
+where home_game_number = 1
+order by GAME_DATE</code></pre>
+
     <h3>The results</h3>
     <p>
       The Cavaliers won 7 of their 10 home openers, giving them a 70%
