@@ -175,6 +175,278 @@ ORDER BY order_count DESC;</code></pre>
       </div>
     </details> -->
 
+<!-- ENTRY: Oct 14, Cavaliers Home Opener Analysis -->
+<details class="entry" data-tool="SQL" id="cavs-home-openers">
+  <summary>
+    <div class="meta">
+      <time datetime="2026-10-14">Oct 14, 2026</time>
+      <span class="pill">SQL</span>
+    </div>
+    <h2>How Have the Cleveland Cavaliers Performed in Their Last 10 Home Openers?</h2>
+    <p class="teaser">
+      Analyzing Cleveland's home opener results, scoring, shooting efficiency,
+      team statistics, and overtime games across 10 seasons.
+    </p>
+    <span class="chev" aria-hidden="true"></span>
+  </summary>
+
+  <div class="entry-body">
+    <h3>The question</h3>
+    <p>
+      How have the Cleveland Cavaliers performed in their home openers over
+      the last 10 seasons? I wanted to examine their win-loss record alongside
+      points, shooting percentages, rebounds, assists, steals, blocks,
+      turnovers, and total player-minutes to identify potential overtime games.
+    </p>
+
+    <h3>The approach</h3>
+    <p>
+      Using SQL, I analyzed the Cavaliers' home opener game data across
+      10 seasons. I reviewed individual game results and compared them
+      with average statistics to identify patterns in scoring, shooting
+      efficiency, and overall team performance.
+    </p>
+    <p>
+      I also analyzed total team player-minutes. In a standard NBA
+      regulation game, five players playing 48 minutes each results in
+      240 combined player-minutes (48 × 5). A total above 240 can indicate
+      overtime because players accumulate additional minutes during
+      extra periods. This provided another way to identify games that
+      lasted beyond regulation.
+    </p>
+
+    <h3>The results</h3>
+    <p>
+      The Cavaliers won 7 of their 10 home openers, giving them a 70%
+      winning rate in the games analyzed. They averaged 112.6 points per
+      game, with a 47.4% field goal percentage and a 34.2% three-point
+      percentage.
+    </p>
+
+    <div class="result">
+      <table>
+        <tr>
+          <th>Season</th>
+          <th>Matchup</th>
+          <th class="num">Points</th>
+          <th class="num">FG%</th>
+          <th class="num">3P%</th>
+          <th class="num">Rebounds</th>
+          <th class="num">Assists</th>
+          <th class="num">Steals</th>
+          <th class="num">Blocks</th>
+          <th class="num">Turnovers</th>
+          <th>Result</th>
+          <th class="num">+/-</th>
+          <th class="num">Team Minutes</th>
+        </tr>
+        <tr>
+          <td>2016–17</td>
+          <td>NYK</td>
+          <td class="num">117</td>
+          <td class="num">47.9%</td>
+          <td class="num">37.1%</td>
+          <td class="num">51</td>
+          <td class="num">31</td>
+          <td class="num">12</td>
+          <td class="num">5</td>
+          <td class="num">14</td>
+          <td>W</td>
+          <td class="num">29</td>
+          <td class="num">241</td>
+        </tr>
+        <tr>
+          <td>2017–18</td>
+          <td>BOS</td>
+          <td class="num">102</td>
+          <td class="num">45.8%</td>
+          <td class="num">22.7%</td>
+          <td class="num">50</td>
+          <td class="num">19</td>
+          <td class="num">3</td>
+          <td class="num">4</td>
+          <td class="num">17</td>
+          <td>W</td>
+          <td class="num">3</td>
+          <td class="num">239</td>
+        </tr>
+        <tr>
+          <td>2018–19</td>
+          <td>ATL</td>
+          <td class="num">111</td>
+          <td class="num">46.5%</td>
+          <td class="num">37.0%</td>
+          <td class="num">49</td>
+          <td class="num">23</td>
+          <td class="num">5</td>
+          <td class="num">2</td>
+          <td class="num">18</td>
+          <td>L</td>
+          <td class="num">-22</td>
+          <td class="num">240</td>
+        </tr>
+        <tr>
+          <td>2019–20</td>
+          <td>IND</td>
+          <td class="num">110</td>
+          <td class="num">50.0%</td>
+          <td class="num">35.5%</td>
+          <td class="num">44</td>
+          <td class="num">23</td>
+          <td class="num">9</td>
+          <td class="num">7</td>
+          <td class="num">18</td>
+          <td>W</td>
+          <td class="num">11</td>
+          <td class="num">239</td>
+        </tr>
+        <tr>
+          <td>2020–21</td>
+          <td>CHA</td>
+          <td class="num">121</td>
+          <td class="num">52.9%</td>
+          <td class="num">46.7%</td>
+          <td class="num">50</td>
+          <td class="num">34</td>
+          <td class="num">12</td>
+          <td class="num">3</td>
+          <td class="num">18</td>
+          <td>W</td>
+          <td class="num">7</td>
+          <td class="num">241</td>
+        </tr>
+        <tr>
+          <td>2021–22</td>
+          <td>CHA</td>
+          <td class="num">112</td>
+          <td class="num">51.2%</td>
+          <td class="num">29.0%</td>
+          <td class="num">36</td>
+          <td class="num">26</td>
+          <td class="num">9</td>
+          <td class="num">3</td>
+          <td class="num">18</td>
+          <td>L</td>
+          <td class="num">-11</td>
+          <td class="num">240</td>
+        </tr>
+        <tr>
+          <td>2022–23</td>
+          <td>WAS</td>
+          <td class="num">117</td>
+          <td class="num">42.7%</td>
+          <td class="num">39.4%</td>
+          <td class="num">48</td>
+          <td class="num">19</td>
+          <td class="num">10</td>
+          <td class="num">5</td>
+          <td class="num">13</td>
+          <td>W</td>
+          <td class="num">10</td>
+          <td class="num">266</td>
+        </tr>
+        <tr>
+          <td>2023–24</td>
+          <td>OKC</td>
+          <td class="num">105</td>
+          <td class="num">41.3%</td>
+          <td class="num">26.7%</td>
+          <td class="num">48</td>
+          <td class="num">20</td>
+          <td class="num">10</td>
+          <td class="num">8</td>
+          <td class="num">13</td>
+          <td>L</td>
+          <td class="num">-3</td>
+          <td class="num">240</td>
+        </tr>
+        <tr>
+          <td>2024–25</td>
+          <td>DET</td>
+          <td class="num">113</td>
+          <td class="num">51.2%</td>
+          <td class="num">38.2%</td>
+          <td class="num">39</td>
+          <td class="num">28</td>
+          <td class="num">13</td>
+          <td class="num">4</td>
+          <td class="num">12</td>
+          <td>W</td>
+          <td class="num">12</td>
+          <td class="num">240</td>
+        </tr>
+        <tr>
+          <td>2025–26</td>
+          <td>MIL</td>
+          <td class="num">118</td>
+          <td class="num">44.8%</td>
+          <td class="num">30.0%</td>
+          <td class="num">44</td>
+          <td class="num">23</td>
+          <td class="num">10</td>
+          <td class="num">2</td>
+          <td class="num">16</td>
+          <td>W</td>
+          <td class="num">5</td>
+          <td class="num">239</td>
+        </tr>
+        <tr>
+          <th>Average</th>
+          <td>10 games</td>
+          <td class="num">112.6</td>
+          <td class="num">47.4%</td>
+          <td class="num">34.2%</td>
+          <td class="num">45.9</td>
+          <td class="num">24.6</td>
+          <td class="num">9.3</td>
+          <td class="num">4.3</td>
+          <td class="num">15.7</td>
+          <td>70% W</td>
+          <td class="num">4.1</td>
+          <td class="num">—</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Key findings</h3>
+    <div class="takeaway">
+      <p>
+        <b>Takeaway:</b> The Cavaliers won 7 of their 10 home openers,
+        recording a 70% winning rate across the seasons analyzed. They
+        averaged 112.6 points per game, shot 47.4% from the field, and
+        made 34.2% of their three-point attempts. Their average point
+        differential was +4.1, suggesting they generally outscored their
+        opponents in these opening-night matchups.
+      </p>
+
+      <p>
+        <b>Overtime finding:</b> One of the 10 home openers recorded
+        266 total team player-minutes, exceeding the 240-minute regulation
+        benchmark. This indicates that the game went into overtime.
+        Additional playing time can affect total points, rebounds, assists,
+        and other counting statistics, so overtime is useful context when
+        comparing games.
+      </p>
+
+      <p>
+        Cleveland scored its most points in the 2020–21 opener against
+        Charlotte, finishing with 121 points and a 46.7% three-point
+        percentage. Its largest listed margin of victory was 29 points
+        against New York in 2016–17.
+      </p>
+
+      <p>
+        This analysis demonstrates how SQL can organize game-level data,
+        aggregate performance metrics, and compare results across multiple
+        seasons. Looking at win percentage alongside shooting, rebounds,
+        assists, point differential, and playing time provides a broader
+        view of team performance than wins and losses alone.
+      </p>
+    </div>
+  </div>
+</details>
+
+
 <!-- ENTRY: Oct 13, Players in top 30 for points, rebounds, assists -->
 <details class="entry" data-tool="Python" id="nba-player-ranking">
   <summary>
@@ -316,7 +588,6 @@ print(player_totals[(player_totals["points_rank"] <= 30) & (player_totals["assis
     </div>
   </div>
 </details>
-```
 
     <!-- ENTRY: Oct 13, teams above league average -->
     <details class="entry" data-tool="Python" id="nba-team-averages">
