@@ -175,6 +175,303 @@ ORDER BY order_count DESC;</code></pre>
       </div>
     </details> -->
 
+
+<!-- ENTRY: Oct 16, Average NBA Opening Games and Team Performance -->
+<details class="entry" data-tool="SQL" id="nba-opening-game-averages">
+  <summary>
+    <div class="meta">
+      <time datetime="2026-10-16">Oct 16, 2026</time>
+      <span class="pill">SQL</span>
+    </div>
+    <h2>How Has NBA Opening-Game Performance Changed Over the Last 10 Seasons?</h2>
+    <p class="teaser">
+      Using SQL to analyze the average statistics from each team's first
+      game of every season and compare opening-game trends with team
+      averages across 10 NBA seasons.
+    </p>
+    <span class="chev" aria-hidden="true"></span>
+  </summary>
+
+  <div class="entry-body">
+    <h3>The question</h3>
+    <p>
+      How has NBA team performance changed over the last 10 seasons,
+      and how do opening-game averages compare with individual team
+      averages across the same period? I wanted to examine scoring,
+      shooting efficiency, three-point volume, rebounds, assists,
+      steals, blocks, and turnovers to identify trends in the way
+      teams produce offense and contribute across the court.
+    </p>
+
+    <h3>The approach</h3>
+    <p>
+      Using SQL and a dataset containing NBA team box scores across
+      10 seasons, I used a common table expression (CTE) and the
+      ROW_NUMBER() window function to identify each team's first
+      regular-season game in every season. I excluded playoff games
+      so that the analysis focused on regular-season performance.
+    </p>
+
+    <p>
+      After identifying the first game for each team, I grouped the
+      results by season and calculated average statistics across the
+      teams represented in that season. I then compared those
+      season-level results with average statistics for individual
+      teams over the 10-season period.
+    </p>
+
+    <p>
+      This approach allowed me to examine both year-over-year
+      changes in opening-game performance and differences between
+      teams. Using averages provides a useful starting point for
+      identifying trends, although it does not establish what
+      caused those differences.
+    </p>
+
+    <pre><code>WITH game_number_all AS (
+    SELECT *,
+        ROW_NUMBER() OVER (
+            PARTITION BY team_name, SEASON
+            ORDER BY GAME_DATE ASC
+        ) AS game_number
+    FROM all_teams_last_10_seasons_box_scores
+    WHERE SEASON_TYPE &lt;&gt; 'Playoffs'
+)
+SELECT
+    SEASON,
+    ROUND(AVG(PTS), 2) AS avg_pts,
+    ROUND(AVG(FGM), 2) AS avg_fgm,
+    ROUND(AVG(FGA), 2) AS avg_fga,
+    ROUND(AVG(FG_PCT), 2) AS avg_fg_pct,
+    ROUND(AVG(FG3M), 2) AS avg_fg3m,
+    ROUND(AVG(FG3A), 2) AS avg_fg3a,
+    ROUND(AVG(FG3_PCT), 2) AS avg_fg3_pct,
+    ROUND(AVG(FTM), 2) AS avg_ftm,
+    ROUND(AVG(FTA), 2) AS avg_fta,
+    ROUND(AVG(FT_PCT), 2) AS avg_ft_pct,
+    ROUND(AVG(OREB), 2) AS avg_oreb,
+    ROUND(AVG(DREB), 2) AS avg_dreb,
+    ROUND(AVG(REB), 2) AS avg_reb,
+    ROUND(AVG(AST), 2) AS avg_ast,
+    ROUND(AVG(STL), 2) AS avg_stl,
+    ROUND(AVG(BLK), 2) AS avg_blk,
+    ROUND(AVG(TOV), 2) AS avg_tov
+FROM game_number_all
+WHERE game_number = 1
+GROUP BY SEASON
+ORDER BY SEASON;</code></pre>
+
+    <h3>The results: Opening-game averages by season</h3>
+    <p>
+      The results show that average scoring in the first game of
+      each team's season increased over the period analyzed.
+      Three-point attempts and makes also increased compared with
+      the earliest season in the dataset.
+    </p>
+
+    <div class="result">
+      <table>
+        <tr>
+          <th>Season</th>
+          <th class="num">PTS</th>
+          <th class="num">FGM</th>
+          <th class="num">FGA</th>
+          <th class="num">FG%</th>
+          <th class="num">3PM</th>
+          <th class="num">3PA</th>
+          <th class="num">3P%</th>
+          <th class="num">FTM</th>
+          <th class="num">FTA</th>
+          <th class="num">FT%</th>
+          <th class="num">OREB</th>
+          <th class="num">DREB</th>
+          <th class="num">REB</th>
+          <th class="num">AST</th>
+          <th class="num">STL</th>
+          <th class="num">BLK</th>
+          <th class="num">TOV</th>
+        </tr>
+        <tr>
+          <td>2016–17</td><td class="num">107.67</td><td class="num">40.33</td><td class="num">88.77</td><td class="num">46%</td><td class="num">8.33</td><td class="num">25.00</td><td class="num">33%</td><td class="num">18.67</td><td class="num">24.33</td><td class="num">77%</td><td class="num">11.43</td><td class="num">33.80</td><td class="num">45.23</td><td class="num">23.17</td><td class="num">8.37</td><td class="num">4.90</td><td class="num">13.77</td>
+        </tr>
+        <tr>
+          <td>2017–18</td><td class="num">107.03</td><td class="num">39.73</td><td class="num">88.63</td><td class="num">45%</td><td class="num">9.77</td><td class="num">27.60</td><td class="num">35%</td><td class="num">17.80</td><td class="num">22.33</td><td class="num">80%</td><td class="num">10.87</td><td class="num">34.77</td><td class="num">45.63</td><td class="num">22.43</td><td class="num">7.90</td><td class="num">5.70</td><td class="num">15.30</td>
+        </tr>
+        <tr>
+          <td>2018–19</td><td class="num">109.20</td><td class="num">40.27</td><td class="num">90.40</td><td class="num">45%</td><td class="num">9.97</td><td class="num">29.70</td><td class="num">33%</td><td class="num">18.70</td><td class="num">24.97</td><td class="num">75%</td><td class="num">10.50</td><td class="num">35.93</td><td class="num">46.43</td><td class="num">22.50</td><td class="num">6.97</td><td class="num">5.63</td><td class="num">13.93</td>
+        </tr>
+        <tr>
+          <td>2019–20</td><td class="num">110.90</td><td class="num">39.90</td><td class="num">90.30</td><td class="num">44%</td><td class="num">11.30</td><td class="num">32.73</td><td class="num">34%</td><td class="num">19.80</td><td class="num">26.10</td><td class="num">75%</td><td class="num">10.50</td><td class="num">36.80</td><td class="num">47.30</td><td class="num">22.80</td><td class="num">7.50</td><td class="num">5.00</td><td class="num">15.93</td>
+        </tr>
+        <tr>
+          <td>2020–21</td><td class="num">113.53</td><td class="num">42.17</td><td class="num">89.57</td><td class="num">47%</td><td class="num">11.73</td><td class="num">33.93</td><td class="num">35%</td><td class="num">17.47</td><td class="num">23.17</td><td class="num">74%</td><td class="num">9.07</td><td class="num">35.87</td><td class="num">44.93</td><td class="num">25.03</td><td class="num">7.83</td><td class="num">5.17</td><td class="num">15.40</td>
+        </tr>
+        <tr>
+          <td>2021–22</td><td class="num">111.97</td><td class="num">41.87</td><td class="num">93.20</td><td class="num">45%</td><td class="num">13.23</td><td class="num">36.43</td><td class="num">36%</td><td class="num">15.00</td><td class="num">20.13</td><td class="num">75%</td><td class="num">10.07</td><td class="num">38.03</td><td class="num">48.10</td><td class="num">24.33</td><td class="num">8.10</td><td class="num">5.47</td><td class="num">14.10</td>
+        </tr>
+        <tr>
+          <td>2022–23</td><td class="num">111.70</td><td class="num">40.67</td><td class="num">90.17</td><td class="num">45%</td><td class="num">11.70</td><td class="num">34.30</td><td class="num">34%</td><td class="num">18.67</td><td class="num">24.43</td><td class="num">77%</td><td class="num">10.90</td><td class="num">35.23</td><td class="num">46.13</td><td class="num">23.77</td><td class="num">8.00</td><td class="num">5.03</td><td class="num">14.83</td>
+        </tr>
+        <tr>
+          <td>2023–24</td><td class="num">112.17</td><td class="num">41.53</td><td class="num">90.93</td><td class="num">46%</td><td class="num">12.40</td><td class="num">35.27</td><td class="num">35%</td><td class="num">16.70</td><td class="num">21.90</td><td class="num">77%</td><td class="num">12.00</td><td class="num">34.63</td><td class="num">46.63</td><td class="num">25.33</td><td class="num">7.83</td><td class="num">5.60</td><td class="num">14.03</td>
+        </tr>
+        <tr>
+          <td>2024–25</td><td class="num">113.63</td><td class="num">40.63</td><td class="num">89.67</td><td class="num">46%</td><td class="num">12.50</td><td class="num">36.70</td><td class="num">33%</td><td class="num">19.87</td><td class="num">26.03</td><td class="num">77%</td><td class="num">11.73</td><td class="num">33.43</td><td class="num">45.17</td><td class="num">25.13</td><td class="num">7.87</td><td class="num">5.97</td><td class="num">13.60</td>
+        </tr>
+        <tr>
+          <td>2025–26</td><td class="num">120.40</td><td class="num">43.00</td><td class="num">90.53</td><td class="num">48%</td><td class="num">12.60</td><td class="num">36.03</td><td class="num">35%</td><td class="num">21.80</td><td class="num">28.23</td><td class="num">77%</td><td class="num">10.60</td><td class="num">33.57</td><td class="num">44.17</td><td class="num">25.40</td><td class="num">7.83</td><td class="num">5.40</td><td class="num">14.90</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>The results: Team averages over 10 seasons</h3>
+    <p>
+      The team-level averages provide another perspective on scoring
+      and playing style. The table below includes the average statistics
+      for each team in the supplied dataset. These values can help
+      identify teams that stand out in scoring, shooting, rebounding,
+      and playmaking.
+    </p>
+
+    <div class="result">
+      <table>
+        <tr>
+          <th>Team</th>
+          <th class="num">PTS</th>
+          <th class="num">FGM</th>
+          <th class="num">FGA</th>
+          <th class="num">FG%</th>
+          <th class="num">3PM</th>
+          <th class="num">3PA</th>
+          <th class="num">3P%</th>
+          <th class="num">FTM</th>
+          <th class="num">FTA</th>
+          <th class="num">FT%</th>
+          <th class="num">OREB</th>
+          <th class="num">DREB</th>
+          <th class="num">REB</th>
+          <th class="num">AST</th>
+          <th class="num">STL</th>
+          <th class="num">BLK</th>
+          <th class="num">TOV</th>
+        </tr>
+        <tr><td>Atlanta Hawks</td><td class="num">115.70</td><td class="num">42.60</td><td class="num">88.50</td><td class="num">48%</td><td class="num">10.20</td><td class="num">29.80</td><td class="num">35%</td><td class="num">20.30</td><td class="num">25.00</td><td class="num">82%</td><td class="num">9.30</td><td class="num">35.60</td><td class="num">44.90</td><td class="num">25.30</td><td class="num">9.70</td><td class="num">5.10</td><td class="num">15.70</td></tr>
+        <tr><td>Boston Celtics</td><td class="num">115.70</td><td class="num">42.70</td><td class="num">92.70</td><td class="num">46%</td><td class="num">14.00</td><td class="num">40.20</td><td class="num">34%</td><td class="num">16.30</td><td class="num">21.30</td><td class="num">78%</td><td class="num">10.20</td><td class="num">34.40</td><td class="num">44.60</td><td class="num">24.70</td><td class="num">8.30</td><td class="num">5.60</td><td class="num">11.40</td></tr>
+        <tr><td>Brooklyn Nets</td><td class="num">115.70</td><td class="num">41.60</td><td class="num">90.20</td><td class="num">46%</td><td class="num">12.90</td><td class="num">34.50</td><td class="num">37%</td><td class="num">19.60</td><td class="num">26.40</td><td class="num">74%</td><td class="num">10.50</td><td class="num">34.00</td><td class="num">44.50</td><td class="num">23.20</td><td class="num">7.80</td><td class="num">6.00</td><td class="num">16.80</td></tr>
+        <tr><td>Charlotte Hornets</td><td class="num">116.30</td><td class="num">42.30</td><td class="num">89.40</td><td class="num">47%</td><td class="num">14.00</td><td class="num">35.10</td><td class="num">39%</td><td class="num">17.70</td><td class="num">23.90</td><td class="num">74%</td><td class="num">10.70</td><td class="num">35.90</td><td class="num">46.60</td><td class="num">26.30</td><td class="num">6.20</td><td class="num">6.30</td><td class="num">14.60</td></tr>
+        <tr><td>Chicago Bulls</td><td class="num">108.20</td><td class="num">40.00</td><td class="num">92.00</td><td class="num">43%</td><td class="num">10.20</td><td class="num">32.00</td><td class="num">32%</td><td class="num">18.00</td><td class="num">22.80</td><td class="num">79%</td><td class="num">11.60</td><td class="num">33.60</td><td class="num">45.20</td><td class="num">24.20</td><td class="num">7.70</td><td class="num">4.00</td><td class="num">14.90</td></tr>
+        <tr><td>Cleveland Cavaliers</td><td class="num">111.60</td><td class="num">41.60</td><td class="num">87.40</td><td class="num">48%</td><td class="num">12.20</td><td class="num">32.50</td><td class="num">37%</td><td class="num">16.20</td><td class="num">21.30</td><td class="num">76%</td><td class="num">8.80</td><td class="num">34.60</td><td class="num">43.40</td><td class="num">25.90</td><td class="num">7.80</td><td class="num">4.30</td><td class="num">14.50</td></tr>
+        <tr><td>Dallas Mavericks</td><td class="num">107.20</td><td class="num">37.80</td><td class="num">89.10</td><td class="num">43%</td><td class="num">13.50</td><td class="num">38.90</td><td class="num">35%</td><td class="num">18.10</td><td class="num">23.70</td><td class="num">77%</td><td class="num">9.40</td><td class="num">34.40</td><td class="num">43.80</td><td class="num">21.90</td><td class="num">6.50</td><td class="num">4.00</td><td class="num">13.30</td></tr>
+        <tr><td>Denver Nuggets</td><td class="num">108.90</td><td class="num">40.50</td><td class="num">87.60</td><td class="num">46%</td><td class="num">11.40</td><td class="num">30.90</td><td class="num">36%</td><td class="num">16.50</td><td class="num">20.50</td><td class="num">80%</td><td class="num">10.20</td><td class="num">36.40</td><td class="num">46.60</td><td class="num">24.70</td><td class="num">8.10</td><td class="num">5.20</td><td class="num">16.50</td></tr>
+        <tr><td>Detroit Pistons</td><td class="num">103.90</td><td class="num">39.90</td><td class="num">90.40</td><td class="num">44%</td><td class="num">8.50</td><td class="num">28.60</td><td class="num">30%</td><td class="num">15.60</td><td class="num">20.30</td><td class="num">74%</td><td class="num">11.30</td><td class="num">33.70</td><td class="num">45.00</td><td class="num">24.40</td><td class="num">7.20</td><td class="num">5.00</td><td class="num">13.10</td></tr>
+        <tr><td>Golden State Warriors</td><td class="num">115.70</td><td class="num">40.90</td><td class="num">92.20</td><td class="num">45%</td><td class="num">13.20</td><td class="num">37.90</td><td class="num">35%</td><td class="num">20.70</td><td class="num">25.00</td><td class="num">82%</td><td class="num">12.10</td><td class="num">34.60</td><td class="num">46.70</td><td class="num">28.60</td><td class="num">9.00</td><td class="num">4.90</td><td class="num">16.60</td></tr>
+        <tr><td>Houston Rockets</td><td class="num">111.30</td><td class="num">40.30</td><td class="num">91.70</td><td class="num">44%</td><td class="num">12.10</td><td class="num">38.50</td><td class="num">31%</td><td class="num">18.60</td><td class="num">24.50</td><td class="num">76%</td><td class="num">11.40</td><td class="num">32.50</td><td class="num">43.90</td><td class="num">23.70</td><td class="num">7.50</td><td class="num">4.20</td><td class="num">15.40</td></tr>
+        <tr><td>Indiana Pacers</td><td class="num">123.40</td><td class="num">45.90</td><td class="num">94.30</td><td class="num">49%</td><td class="num">11.90</td><td class="num">34.00</td><td class="num">36%</td><td class="num">19.70</td><td class="num">25.40</td><td class="num">77%</td><td class="num">10.30</td><td class="num">37.70</td><td class="num">48.00</td><td class="num">28.30</td><td class="num">7.40</td><td class="num">7.20</td><td class="num">15.00</td></tr>
+        <tr><td>LA Clippers</td><td class="num">110.80</td><td class="num">40.70</td><td class="num">90.60</td><td class="num">45%</td><td class="num">11.40</td><td class="num">33.80</td><td class="num">33%</td><td class="num">18.00</td><td class="num">24.50</td><td class="num">75%</td><td class="num">12.30</td><td class="num">34.70</td><td class="num">47.00</td><td class="num">23.50</td><td class="num">8.70</td><td class="num">4.70</td><td class="num">14.50</td></tr>
+        <tr><td>Los Angeles Lakers</td><td class="num">109.10</td><td class="num">41.20</td><td class="num">89.00</td><td class="num">46%</td><td class="num">9.30</td><td class="num">31.60</td><td class="num">29%</td><td class="num">17.40</td><td class="num">24.30</td><td class="num">71%</td><td class="num">9.70</td><td class="num">34.80</td><td class="num">44.50</td><td class="num">21.90</td><td class="num">7.40</td><td class="num">4.80</td><td class="num">15.70</td></tr>
+        <tr><td>Memphis Grizzlies</td><td class="num">111.30</td><td class="num">40.40</td><td class="num">91.00</td><td class="num">44%</td><td class="num">11.60</td><td class="num">34.90</td><td class="num">34%</td><td class="num">18.90</td><td class="num">26.10</td><td class="num">73%</td><td class="num">10.70</td><td class="num">32.70</td><td class="num">43.40</td><td class="num">22.90</td><td class="num">7.50</td><td class="num">7.60</td><td class="num">13.10</td></tr>
+        <tr><td>Miami Heat</td><td class="num">111.10</td><td class="num">41.20</td><td class="num">90.40</td><td class="num">46%</td><td class="num">9.30</td><td class="num">27.10</td><td class="num">34%</td><td class="num">19.40</td><td class="num">25.40</td><td class="num">76%</td><td class="num">11.30</td><td class="num">36.90</td><td class="num">48.20</td><td class="num">23.40</td><td class="num">7.40</td><td class="num">4.50</td><td class="num">14.70</td></tr>
+        <tr><td>Milwaukee Bucks</td><td class="num">114.70</td><td class="num">42.70</td><td class="num">89.00</td><td class="num">48%</td><td class="num">12.90</td><td class="num">35.00</td><td class="num">36%</td><td class="num">16.40</td><td class="num">22.40</td><td class="num">73%</td><td class="num">8.60</td><td class="num">40.40</td><td class="num">49.00</td><td class="num">24.50</td><td class="num">5.90</td><td class="num">6.30</td><td class="num">12.60</td></tr>
+        <tr><td>Minnesota Timberwolves</td><td class="num">109.70</td><td class="num">38.80</td><td class="num">91.00</td><td class="num">43%</td><td class="num">10.60</td><td class="num">31.80</td><td class="num">34%</td><td class="num">21.50</td><td class="num">27.20</td><td class="num">79%</td><td class="num">12.90</td><td class="num">35.90</td><td class="num">48.80</td><td class="num">22.00</td><td class="num">8.30</td><td class="num">5.70</td><td class="num">13.80</td></tr>
+        <tr><td>New Orleans Pelicans</td><td class="num">114.20</td><td class="num">42.40</td><td class="num">92.60</td><td class="num">46%</td><td class="num">12.10</td><td class="num">30.80</td><td class="num">38%</td><td class="num">17.30</td><td class="num">22.50</td><td class="num">76%</td><td class="num">12.50</td><td class="num">35.70</td><td class="num">48.20</td><td class="num">27.20</td><td class="num">9.20</td><td class="num">6.50</td><td class="num">15.40</td></tr>
+        <tr><td>New York Knicks</td><td class="num">109.80</td><td class="num">40.30</td><td class="num">91.90</td><td class="num">44%</td><td class="num">11.90</td><td class="num">33.50</td><td class="num">35%</td><td class="num">17.30</td><td class="num">23.40</td><td class="num">74%</td><td class="num">10.00</td><td class="num">34.60</td><td class="num">44.60</td><td class="num">22.70</td><td class="num">8.50</td><td class="num">4.70</td><td class="num">15.00</td></tr>
+        <tr><td>Oklahoma City Thunder</td><td class="num">105.70</td><td class="num">38.90</td><td class="num">92.30</td><td class="num">42%</td><td class="num">10.80</td><td class="num">36.70</td><td class="num">30%</td><td class="num">17.10</td><td class="num">23.50</td><td class="num">73%</td><td class="num">11.80</td><td class="num">36.00</td><td class="num">47.80</td><td class="num">22.90</td><td class="num">8.50</td><td class="num">5.60</td><td class="num">13.60</td></tr>
+        <tr><td>Orlando Magic</td><td class="num">108.60</td><td class="num">39.70</td><td class="num">89.20</td><td class="num">45%</td><td class="num">9.90</td><td class="num">29.40</td><td class="num">34%</td><td class="num">19.30</td><td class="num">26.20</td><td class="num">73%</td><td class="num">12.50</td><td class="num">36.00</td><td class="num">48.50</td><td class="num">21.70</td><td class="num">8.20</td><td class="num">5.90</td><td class="num">14.10</td></tr>
+        <tr><td>Philadelphia 76ers</td><td class="num">109.60</td><td class="num">39.60</td><td class="num">86.40</td><td class="num">46%</td><td class="num">10.80</td><td class="num">30.80</td><td class="num">34%</td><td class="num">19.60</td><td class="num">26.60</td><td class="num">74%</td><td class="num">8.50</td><td class="num">36.80</td><td class="num">45.30</td><td class="num">21.60</td><td class="num">6.80</td><td class="num">5.40</td><td class="num">14.20</td></tr>
+        <tr><td>Phoenix Suns</td><td class="num">107.00</td><td class="num">39.60</td><td class="num">86.40</td><td class="num">46%</td><td class="num">11.00</td><td class="num">30.40</td><td class="num">35%</td><td class="num">16.80</td><td class="num">22.40</td><td class="num">76%</td><td class="num">9.90</td><td class="num">34.90</td><td class="num">44.80</td><td class="num">23.60</td><td class="num">7.70</td><td class="num">6.00</td><td class="num">16.30</td></tr>
+        <tr><td>Portland Trail Blazers</td><td class="num">113.00</td><td class="num">40.00</td><td class="num">90.00</td><td class="num">45%</td><td class="num">11.30</td><td class="num">31.20</td><td class="num">38%</td><td class="num">21.70</td><td class="num">25.60</td><td class="num">85%</td><td class="num">10.80</td><td class="num">33.90</td><td class="num">44.70</td><td class="num">21.20</td><td class="num">8.30</td><td class="num">4.50</td><td class="num">14.20</td></tr>
+        <tr><td>Sacramento Kings</td><td class="num">114.20</td><td class="num">42.70</td><td class="num">91.30</td><td class="num">47%</td><td class="num">11.40</td><td class="num">31.20</td><td class="num">36%</td><td class="num">17.40</td><td class="num">23.70</td><td class="num">73%</td><td class="num">9.30</td><td class="num">33.20</td><td class="num">42.50</td><td class="num">22.90</td><td class="num">6.50</td><td class="num">5.30</td><td class="num">13.70</td></tr>
+        <tr><td>San Antonio Spurs</td><td class="num">117.70</td><td class="num">44.20</td><td class="num">91.70</td><td class="num">48%</td><td class="num">9.90</td><td class="num">27.10</td><td class="num">37%</td><td class="num">19.40</td><td class="num">25.20</td><td class="num">77%</td><td class="num">12.90</td><td class="num">36.10</td><td class="num">49.00</td><td class="num">26.00</td><td class="num">7.80</td><td class="num">5.70</td><td class="num">14.20</td></tr>
+        <tr><td>Toronto Raptors</td><td class="num">110.30</td><td class="num">39.70</td><td class="num">90.70</td><td class="num">44%</td><td class="num">11.00</td><td class="num">32.10</td><td class="num">34%</td><td class="num">19.90</td><td class="num">25.50</td><td class="num">77%</td><td class="num">12.30</td><td class="num">34.60</td><td class="num">46.90</td><td class="num">23.40</td><td class="num">9.30</td><td class="num">4.80</td><td class="num">15.60</td></tr>
+        <tr><td>Utah Jazz</td><td class="num">115.00</td><td class="num">41.60</td><td class="num">86.30</td><td class="num">48%</td><td class="num">12.10</td><td class="num">33.20</td><td class="num">36%</td><td class="num">19.70</td><td class="num">25.10</td><td class="num">81%</td><td class="num">10.60</td><td class="num">35.80</td><td class="num">46.40</td><td class="num">23.30</td><td class="num">7.30</td><td class="num">4.50</td><td class="num">13.40</td></tr>
+        <tr><td>Washington Wizards</td><td class="num">109.20</td><td class="num">40.50</td><td class="num">91.20</td><td class="num">44%</td><td class="num">9.20</td><td class="num">29.60</td><td class="num">31%</td><td class="num">19.00</td><td class="num">25.20</td><td class="num">75%</td><td class="num">10.60</td><td class="num">35.80</td><td class="num">46.40</td><td class="num">23.80</td><td class="num">8.10</td><td class="num">7.30</td><td class="num">15.50</td></tr>
+      </table>
+    </div>
+
+    <h3>Key findings</h3>
+    <div class="takeaway">
+      <p>
+        <b>Scoring increased:</b> Average first-game scoring rose
+        from 107.67 points in 2016–17 to 120.40 points in 2025–26,
+        an increase of 12.73 points per team. The 2025–26 season
+        had the highest opening-game scoring average in the dataset,
+        while 2017–18 had the lowest at 107.03.
+      </p>
+
+      <p>
+        <b>Three-point volume grew:</b> Average three-pointers made
+        increased from 8.33 in 2016–17 to 12.60 in 2025–26.
+        Three-point attempts increased from 25.00 to 36.03 per team.
+        This indicates that teams were attempting and making more
+        three-pointers in their first games than they did at the
+        beginning of the period analyzed.
+      </p>
+
+      <p>
+        <b>Scoring and shooting efficiency are different measures:</b>
+        Average field-goal percentage ranged from approximately
+        44% to 48% across the seasons. The increase in scoring
+        therefore should not be attributed to shooting efficiency
+        alone. Shot volume, three-point attempts, free throws,
+        and other factors can also influence points scored.
+      </p>
+
+      <p>
+        <b>Team averages reveal different strengths:</b> In the
+        supplied team-level results, the Indiana Pacers recorded
+        the highest average scoring at 123.40 points. The Detroit
+        Pistons had the lowest at 103.90. The Golden State Warriors
+        recorded the highest average assists at 28.60, while the
+        Milwaukee Bucks and San Antonio Spurs led the supplied
+        team averages in rebounds at 49.00.
+      </p>
+
+      <p>
+        <b>Cleveland provides a useful comparison:</b> The
+        Cleveland Cavaliers averaged 111.60 points, 25.90 assists,
+        and 43.40 rebounds in the team-level results provided.
+        Comparing these figures with Cleveland's first-game
+        performance in each season would provide a more focused
+        way to investigate whether its opening games differ from
+        its typical performance.
+      </p>
+
+      <p>
+        <b>What this analysis demonstrates:</b> SQL can use
+        window functions to identify specific games, CTEs to
+        organize intermediate results, and aggregate functions
+        to summarize performance across seasons and teams.
+        Combining these techniques makes it possible to examine
+        historical trends and compare teams using consistent
+        statistical measures.
+      </p>
+    </div>
+
+    <h3>Conclusion</h3>
+    <p>
+      Across the 10 seasons analyzed, average scoring and
+      three-point volume in teams' first regular-season games
+      increased. The team averages also show that scoring,
+      rebounding, and playmaking differ across franchises.
+      These results provide a foundation for further analysis,
+      such as comparing opening-game statistics with full-season
+      averages, ranking teams by selected metrics, or measuring
+      the relationship between three-point volume and scoring.
+    </p>
+
+    <p>
+      One limitation is that first-game averages represent a
+      specific point in each season and can be influenced by
+      individual matchups and early-season variation. The
+      team-level averages provide broader context, but they
+      should not be treated as a direct measure of opening-game
+      performance without calculating the same statistics over
+      matching samples.
+    </p>
+  </div>
+</details>
+
+
 <!-- ENTRY: Oct 14, Cavaliers Home Opener Analysis -->
 <details class="entry" data-tool="SQL" id="cavs-home-openers">
   <summary>
