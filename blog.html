@@ -175,12 +175,284 @@ ORDER BY order_count DESC;</code></pre>
       </div>
     </details> -->
 
-
-<!-- ENTRY: Oct 21, Fantasy Basketball Scoring Platform Comparison -->
-<details class="entry" data-tool="SQL" id="fantasy-basketball-platform-rankings">
+<!-- ENTRY: Oct 21, Fantasy Basketball Assist Efficiency and Sleeper Picks -->
+<details class="entry" data-tool="SQL" id="fantasy-basketball-assist-sleeper-picks">
   <summary>
     <div class="meta">
       <time datetime="2026-10-21">Oct 21, 2026</time>
+      <span class="pill">SQL</span>
+    </div>
+    <h2>Which NBA Players Could Be Undervalued Fantasy Basketball Assist Picks?</h2>
+    <p class="teaser">
+      Using SQL to analyze assist percentage, assists per game, minutes,
+      and turnovers to identify potential fantasy basketball sleepers
+      who create playmaking value without requiring heavy playing time.
+    </p>
+    <span class="chev" aria-hidden="true"></span>
+  </summary>
+
+  <div class="entry-body">
+    <h3>The question</h3>
+    <p>
+      Which NBA players could be valuable fantasy basketball options
+      for assists without needing to play heavy minutes? I wanted to
+      identify potential sleeper picks by examining assist percentage,
+      average assists, playing time, and turnovers. The goal was to
+      find players who contribute to playmaking efficiently and may
+      be overlooked when fantasy managers focus primarily on
+      minutes played or overall counting statistics.
+    </p>
+
+    <h3>The approach</h3>
+    <p>
+      Using SQL and player game logs from the 2025–26 NBA season,
+      I grouped the data by player, team, and season. I calculated
+      average assist percentage (AST_PCT), assists per game,
+      minutes per game, and turnovers per game to compare players'
+      playmaking contributions with their playing time and ball
+      security.
+    </p>
+
+    <p>
+      I used AVG() to calculate the average statistics and COUNT()
+      to measure the number of games represented. To focus on
+      players who regularly contribute assists, I filtered for
+      players averaging more than four assists per game and
+      appearing in at least 20 games. Finally, I sorted the
+      results by assist percentage in descending order to highlight
+      players who account for a relatively large share of their
+      team's assists.
+    </p>
+
+    <p>
+      Assist percentage alone does not identify a fantasy sleeper.
+      I also considered minutes and turnovers when interpreting the
+      results. Players with high assist percentages, lower minutes,
+      and relatively few turnovers may offer useful fantasy value,
+      particularly in formats that reward assists and penalize
+      turnovers.
+    </p>
+
+    <pre><code>SELECT
+    PLAYER_NAME,
+    TEAM_NAME,
+    SEASON_YEAR,
+    ROUND(AVG(AST_PCT), 2) AS avg_ast_pct,
+    AVG(AST) AS avg_ast,
+    ROUND(AVG(MIN), 2) AS avg_min,
+    ROUND(AVG(TOV), 2) AS avg_tov,
+    COUNT(*) AS games
+FROM player_game_logs
+WHERE SEASON_YEAR = '2025-26'
+GROUP BY PLAYER_NAME, TEAM_NAME, SEASON_YEAR
+HAVING AVG(AST) > 4
+   AND COUNT(*) >= 20
+ORDER BY avg_ast_pct DESC;</code></pre>
+
+    <h3>The results: Assist percentage and playing time</h3>
+    <p>
+      The table below shows the qualifying players ranked by average
+      assist percentage. Comparing assist percentage with minutes
+      and turnovers helps distinguish high-volume primary playmakers
+      from potential lower-minute options who may provide useful
+      assist production with fewer turnovers.
+    </p>
+
+    <div class="result">
+      <table>
+        <tr>
+          <th>Player</th>
+          <th>Team</th>
+          <th>Season</th>
+          <th class="num">AST%</th>
+          <th class="num">AST/G</th>
+          <th class="num">MIN/G</th>
+          <th class="num">TOV/G</th>
+          <th class="num">Games</th>
+        </tr>
+        <tr>
+          <td>T.J. McConnell</td><td>Indiana Pacers</td><td>2025-26</td>
+          <td class="num">0.47</td><td class="num">5.1250</td>
+          <td class="num">17.19</td><td class="num">1.14</td><td class="num">56</td>
+        </tr>
+        <tr>
+          <td>Nikola Jokić</td><td>Denver Nuggets</td><td>2025-26</td>
+          <td class="num">0.46</td><td class="num">10.7231</td>
+          <td class="num">34.84</td><td class="num">3.74</td><td class="num">65</td>
+        </tr>
+        <tr>
+          <td>Ja Morant</td><td>Memphis Grizzlies</td><td>2025-26</td>
+          <td class="num">0.45</td><td class="num">8.0500</td>
+          <td class="num">28.42</td><td class="num">3.55</td><td class="num">20</td>
+        </tr>
+        <tr>
+          <td>Cade Cunningham</td><td>Detroit Pistons</td><td>2025-26</td>
+          <td class="num">0.43</td><td class="num">9.9063</td>
+          <td class="num">33.93</td><td class="num">3.69</td><td class="num">64</td>
+        </tr>
+        <tr>
+          <td>Isaiah Collier</td><td>Utah Jazz</td><td>2025-26</td>
+          <td class="num">0.41</td><td class="num">7.1695</td>
+          <td class="num">25.71</td><td class="num">2.51</td><td class="num">59</td>
+        </tr>
+        <tr>
+          <td>Josh Giddey</td><td>Chicago Bulls</td><td>2025-26</td>
+          <td class="num">0.40</td><td class="num">9.1481</td>
+          <td class="num">32.06</td><td class="num">3.63</td><td class="num">54</td>
+        </tr>
+        <tr>
+          <td>LaMelo Ball</td><td>Charlotte Hornets</td><td>2025-26</td>
+          <td class="num">0.39</td><td class="num">7.1389</td>
+          <td class="num">28.02</td><td class="num">2.81</td><td class="num">72</td>
+        </tr>
+        <tr>
+          <td>Luka Dončić</td><td>Los Angeles Lakers</td><td>2025-26</td>
+          <td class="num">0.39</td><td class="num">8.2813</td>
+          <td class="num">35.76</td><td class="num">3.98</td><td class="num">64</td>
+        </tr>
+        <tr>
+          <td>Andrew Nembhard</td><td>Indiana Pacers</td><td>2025-26</td>
+          <td class="num">0.37</td><td class="num">7.6667</td>
+          <td class="num">31.33</td><td class="num">2.40</td><td class="num">57</td>
+        </tr>
+        <tr>
+          <td>James Harden</td><td>LA Clippers</td><td>2025-26</td>
+          <td class="num">0.36</td><td class="num">8.1364</td>
+          <td class="num">35.44</td><td class="num">3.68</td><td class="num">44</td>
+        </tr>
+        <tr>
+          <td>Ryan Nembhard</td><td>Dallas Mavericks</td><td>2025-26</td>
+          <td class="num">0.36</td><td class="num">5.2667</td>
+          <td class="num">19.51</td><td class="num">1.42</td><td class="num">60</td>
+        </tr>
+        <tr>
+          <td>Giannis Antetokounmpo</td><td>Milwaukee Bucks</td><td>2025-26</td>
+          <td class="num">0.36</td><td class="num">5.4444</td>
+          <td class="num">28.87</td><td class="num">3.19</td><td class="num">36</td>
+        </tr>
+        <tr>
+          <td>LeBron James</td><td>Los Angeles Lakers</td><td>2025-26</td>
+          <td class="num">0.34</td><td class="num">7.2000</td>
+          <td class="num">33.15</td><td class="num">2.98</td><td class="num">60</td>
+        </tr>
+        <tr>
+          <td>Kevin Porter Jr.</td><td>Milwaukee Bucks</td><td>2025-26</td>
+          <td class="num">0.34</td><td class="num">7.3684</td>
+          <td class="num">33.18</td><td class="num">2.89</td><td class="num">38</td>
+        </tr>
+        <tr>
+          <td>Stephon Castle</td><td>San Antonio Spurs</td><td>2025-26</td>
+          <td class="num">0.34</td><td class="num">7.3824</td>
+          <td class="num">29.97</td><td class="num">3.19</td><td class="num">68</td>
+        </tr>
+        <tr>
+          <td>Cam Spencer</td><td>Memphis Grizzlies</td><td>2025-26</td>
+          <td class="num">0.33</td><td class="num">5.5556</td>
+          <td class="num">23.81</td><td class="num">1.29</td><td class="num">72</td>
+        </tr>
+        <tr>
+          <td>Russell Westbrook</td><td>Sacramento Kings</td><td>2025-26</td>
+          <td class="num">0.33</td><td class="num">6.6563</td>
+          <td class="num">28.95</td><td class="num">3.27</td><td class="num">64</td>
+        </tr>
+        <tr>
+          <td>James Harden</td><td>Cleveland Cavaliers</td><td>2025-26</td>
+          <td class="num">0.33</td><td class="num">7.6538</td>
+          <td class="num">33.82</td><td class="num">3.19</td><td class="num">26</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Key findings</h3>
+    <div class="takeaway">
+      <p>
+        <b>T.J. McConnell stands out as a potential assist sleeper:</b>
+        McConnell led the supplied results with a 0.47 average
+        assist percentage while playing only 17.19 minutes per game.
+        He averaged 5.13 assists and 1.14 turnovers across 56 games.
+        His combination of assist production, limited playing time,
+        and low turnovers makes him a strong example of the type
+        of player this query was designed to identify.
+      </p>
+
+      <p>
+        <b>Ryan Nembhard offers a similar profile:</b>
+        Nembhard averaged 5.27 assists in 19.51 minutes per game,
+        with 1.42 turnovers and a 0.36 assist percentage. His
+        production in fewer than 20 minutes per game makes him
+        another interesting player to investigate for fantasy
+        formats that reward assists and penalize turnovers.
+      </p>
+
+      <p>
+        <b>Cam Spencer also combines playmaking with low turnovers:</b>
+        Spencer averaged 5.56 assists and 1.29 turnovers in
+        23.81 minutes per game across 72 games. His assist percentage
+        of 0.33 was below the leaders, but his relatively low
+        turnover average and moderate playing time make him worth
+        considering in a deeper sleeper analysis.
+      </p>
+
+      <p>
+        <b>High assist percentage does not always mean low playing time:</b>
+        Nikola Jokić ranked near the top with a 0.46 assist
+        percentage, but averaged 34.84 minutes and 10.72 assists
+        per game. His results illustrate the difference between
+        an established high-volume playmaker and a potential
+        lower-minute sleeper.
+      </p>
+
+      <p>
+        <b>Turnovers add important fantasy context:</b>
+        T.J. McConnell, Ryan Nembhard, and Cam Spencer averaged
+        1.14, 1.42, and 1.29 turnovers per game, respectively.
+        These figures are lower than those of many high-volume
+        playmakers in the table. In leagues that penalize turnovers,
+        this can make their assist production especially interesting.
+      </p>
+
+      <p>
+        <b>What this analysis demonstrates:</b>
+        SQL aggregate functions and HAVING filters can narrow a
+        large player dataset to a specific fantasy basketball use
+        case. Combining assist percentage, assists, minutes, and
+        turnovers provides a more targeted way to identify
+        potential sleeper candidates than sorting by total assists
+        alone.
+      </p>
+    </div>
+
+    <h3>Conclusion</h3>
+    <p>
+      This analysis was designed to find potential fantasy basketball
+      assist contributors who may be overlooked because they do not
+      play starter-level minutes. T.J. McConnell and Ryan Nembhard
+      are particularly relevant examples in the supplied results:
+      both average more than five assists per game while playing
+      fewer than 20 minutes per game and keeping turnovers relatively
+      low.
+    </p>
+
+    <p>
+      The results show why fantasy basketball analysis benefits
+      from looking beyond raw totals. Assist percentage provides
+      context for a player's playmaking role, while minutes and
+      turnovers help evaluate how that production might translate
+      into fantasy value. A useful next step would be to compare
+      these players' per-minute fantasy points, recent playing-time
+      trends, and changes in role when teammates are unavailable.
+    </p>
+  </div>
+</details>
+
+	  
+
+
+<!-- ENTRY: Oct 20, Fantasy Basketball Scoring Platform Comparison -->
+<details class="entry" data-tool="SQL" id="fantasy-basketball-platform-rankings">
+  <summary>
+    <div class="meta">
+      <time datetime="2026-10-20">Oct 20, 2026</time>
       <span class="pill">SQL</span>
     </div>
     <h2>How Do the Top NBA Players Rank Across Fantasy Basketball Platforms?</h2>
