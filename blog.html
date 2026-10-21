@@ -176,6 +176,279 @@ ORDER BY order_count DESC;</code></pre>
     </details> -->
 
 
+<!-- ENTRY: Oct 21, Fantasy Basketball Scoring Platform Comparison -->
+<details class="entry" data-tool="SQL" id="fantasy-basketball-platform-rankings">
+  <summary>
+    <div class="meta">
+      <time datetime="2026-10-21">Oct 21, 2026</time>
+      <span class="pill">SQL</span>
+    </div>
+    <h2>How Do the Top NBA Players Rank Across Fantasy Basketball Platforms?</h2>
+    <p class="teaser">
+      Using SQL aggregate functions and DENSE_RANK() to compare player
+      fantasy production across ESPN, Yahoo/FanDuel, and DraftKings
+      during the 2025–26 NBA season.
+    </p>
+    <span class="chev" aria-hidden="true"></span>
+  </summary>
+
+  <div class="entry-body">
+    <h3>The question</h3>
+    <p>
+      Which NBA players accumulated the most fantasy points during the
+      2025–26 season, and how consistently do players rank across
+      ESPN, Yahoo/FanDuel, and DraftKings scoring systems? I wanted
+      to compare total fantasy production, average fantasy points per
+      minute, playing time, and games played to identify differences
+      between platform rankings.
+    </p>
+
+    <h3>The approach</h3>
+    <p>
+      Using SQL and player game logs, I grouped the data by player,
+      team, and season to calculate total fantasy points for each
+      platform. I used SUM() to aggregate fantasy production,
+      AVG() to calculate average fantasy points per minute and
+      playing time, and COUNT() to determine games played.
+    </p>
+
+    <p>
+      I then used DENSE_RANK() with PARTITION BY SEASON_YEAR to rank
+      players independently within each season. Separate ranking
+      calculations were used for ESPN, Yahoo/FanDuel, and DraftKings,
+      allowing the results to be compared without assuming that
+      every platform values player production identically.
+    </p>
+
+    <p>
+      To focus on players with a meaningful number of appearances,
+      I filtered the results to include only player-team-season
+      combinations with at least 20 games played. The results were
+      ordered by total ESPN fantasy points, with the 2025–26 season
+      selected for the analysis.
+    </p>
+
+    <pre><code>SELECT
+    PLAYER_NAME,
+    TEAM_NAME,
+    SEASON_YEAR,
+    SUM(FP_ESPN) AS total_fp_espn,
+    DENSE_RANK() OVER (
+        PARTITION BY SEASON_YEAR
+        ORDER BY SUM(FP_ESPN) DESC
+    ) AS espn_player_rank,
+    ROUND(SUM(FP_NBA_YAHOO_FANDUEL), 2) AS total_fp_yahoo,
+    DENSE_RANK() OVER (
+        PARTITION BY SEASON_YEAR
+        ORDER BY SUM(FP_NBA_YAHOO_FANDUEL) DESC
+    ) AS yahoo_player_rank,
+    ROUND(SUM(FP_DRAFTKINGS), 2) AS total_fp_dk,
+    DENSE_RANK() OVER (
+        PARTITION BY SEASON_YEAR
+        ORDER BY SUM(FP_DRAFTKINGS) DESC
+    ) AS dk_player_rank,
+    ROUND(AVG(FP_PER_MIN), 2) AS fp_per_min,
+    ROUND(AVG(MIN), 2) AS avg_mins,
+    ROUND(SUM(MIN), 2) AS total_mins,
+    COUNT(*) AS games_played
+FROM player_game_logs
+WHERE SEASON_YEAR = '2025-26'
+GROUP BY PLAYER_NAME, SEASON_YEAR, TEAM_NAME
+HAVING COUNT(*) >= 20
+ORDER BY total_fp_espn DESC;</code></pre>
+
+    <h3>The results: Top 10 players by ESPN fantasy points</h3>
+    <p>
+      The table below compares total fantasy points and player rankings
+      across the three platforms. It also includes average fantasy
+      points per minute, average minutes per game, total minutes, and
+      games played to provide additional context for each player's
+      production.
+    </p>
+
+    <div class="result">
+      <table>
+        <tr>
+          <th>Player</th>
+          <th>Team</th>
+          <th>Season</th>
+          <th class="num">ESPN Pts</th>
+          <th class="num">ESPN Rank</th>
+          <th class="num">Yahoo Pts</th>
+          <th class="num">Yahoo Rank</th>
+          <th class="num">DK Pts</th>
+          <th class="num">DK Rank</th>
+          <th class="num">FP/Min</th>
+          <th class="num">Avg Min</th>
+          <th class="num">Total Min</th>
+          <th class="num">Games</th>
+        </tr>
+        <tr>
+          <td>Nikola Jokić</td><td>Denver Nuggets</td><td>2025-26</td>
+          <td class="num">4310</td><td class="num">1</td>
+          <td class="num">4039.70</td><td class="num">1</td>
+          <td class="num">4298.50</td><td class="num">1</td>
+          <td class="num">1.79</td><td class="num">34.84</td>
+          <td class="num">2264.85</td><td class="num">65</td>
+        </tr>
+        <tr>
+          <td>Luka Dončić</td><td>Los Angeles Lakers</td><td>2025-26</td>
+          <td class="num">3785</td><td class="num">2</td>
+          <td class="num">3694.00</td><td class="num">2</td>
+          <td class="num">3909.25</td><td class="num">2</td>
+          <td class="num">1.60</td><td class="num">35.76</td>
+          <td class="num">2288.60</td><td class="num">64</td>
+        </tr>
+        <tr>
+          <td>Shai Gilgeous-Alexander</td><td>Oklahoma City Thunder</td><td>2025-26</td>
+          <td class="num">3773</td><td class="num">3</td>
+          <td class="num">3429.40</td><td class="num">4</td>
+          <td class="num">3442.00</td><td class="num">4</td>
+          <td class="num">1.53</td><td class="num">33.22</td>
+          <td class="num">2258.95</td><td class="num">68</td>
+        </tr>
+        <tr>
+          <td>Tyrese Maxey</td><td>Philadelphia 76ers</td><td>2025-26</td>
+          <td class="num">3652</td><td class="num">4</td>
+          <td class="num">3403.50</td><td class="num">6</td>
+          <td class="num">3439.00</td><td class="num">5</td>
+          <td class="num">1.27</td><td class="num">38.02</td>
+          <td class="num">2661.12</td><td class="num">70</td>
+        </tr>
+        <tr>
+          <td>Victor Wembanyama</td><td>San Antonio Spurs</td><td>2025-26</td>
+          <td class="num">3546</td><td class="num">5</td>
+          <td class="num">3415.70</td><td class="num">5</td>
+          <td class="num">3394.00</td><td class="num">6</td>
+          <td class="num">1.85</td><td class="num">29.15</td>
+          <td class="num">1865.65</td><td class="num">64</td>
+        </tr>
+        <tr>
+          <td>Scottie Barnes</td><td>Toronto Raptors</td><td>2025-26</td>
+          <td class="num">3524</td><td class="num">6</td>
+          <td class="num">3359.00</td><td class="num">7</td>
+          <td class="num">3352.00</td><td class="num">10</td>
+          <td class="num">1.26</td><td class="num">33.51</td>
+          <td class="num">2680.78</td><td class="num">80</td>
+        </tr>
+        <tr>
+          <td>Jamal Murray</td><td>Denver Nuggets</td><td>2025-26</td>
+          <td class="num">3498</td><td class="num">7</td>
+          <td class="num">3217.50</td><td class="num">9</td>
+          <td class="num">3374.00</td><td class="num">7</td>
+          <td class="num">1.21</td><td class="num">35.36</td>
+          <td class="num">2651.89</td><td class="num">75</td>
+        </tr>
+        <tr>
+          <td>Jalen Johnson</td><td>Atlanta Hawks</td><td>2025-26</td>
+          <td class="num">3496</td><td class="num">8</td>
+          <td class="num">3474.00</td><td class="num">3</td>
+          <td class="num">3685.50</td><td class="num">3</td>
+          <td class="num">1.38</td><td class="num">35.16</td>
+          <td class="num">2531.60</td><td class="num">72</td>
+        </tr>
+        <tr>
+          <td>Kevin Durant</td><td>Houston Rockets</td><td>2025-26</td>
+          <td class="num">3419</td><td class="num">9</td>
+          <td class="num">3248.20</td><td class="num">8</td>
+          <td class="num">3363.00</td><td class="num">9</td>
+          <td class="num">1.15</td><td class="num">36.41</td>
+          <td class="num">2839.82</td><td class="num">78</td>
+        </tr>
+        <tr>
+          <td>Donovan Mitchell</td><td>Cleveland Cavaliers</td><td>2025-26</td>
+          <td class="num">3283</td><td class="num">10</td>
+          <td class="num">3102.20</td><td class="num">14</td>
+          <td class="num">3212.50</td><td class="num">14</td>
+          <td class="num">1.33</td><td class="num">33.46</td>
+          <td class="num">2342.06</td><td class="num">70</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Key findings</h3>
+    <div class="takeaway">
+      <p>
+        <b>Nikola Jokić led all three platforms:</b>
+        Jokić ranked first in ESPN, Yahoo/FanDuel, and DraftKings
+        fantasy points. He recorded 4,310 ESPN points, 4,039.70
+        Yahoo/FanDuel points, and 4,298.50 DraftKings points in the
+        supplied results. He also had the highest average fantasy
+        points per minute among the 10 players listed, at 1.79.
+      </p>
+
+      <p>
+        <b>Some players ranked consistently across platforms:</b>
+        Luka Dončić ranked second across all three systems.
+        Shai Gilgeous-Alexander ranked third on ESPN and fourth on
+        the other two platforms. These similarities suggest that
+        the top of the rankings was relatively consistent for
+        these players, even though their total points differed.
+      </p>
+
+      <p>
+        <b>Jalen Johnson showed one of the largest ranking differences:</b>
+        Johnson ranked eighth on ESPN but third on both Yahoo/FanDuel
+        and DraftKings. His total was 3,496 ESPN points, 3,474
+        Yahoo/FanDuel points, and 3,685.50 DraftKings points.
+        This demonstrates how a player's relative standing can
+        change depending on the scoring system.
+      </p>
+
+      <p>
+        <b>Playing time helps explain total production:</b>
+        Kevin Durant recorded the highest total minutes among the
+        10 players, at 2,839.82, while Victor Wembanyama recorded
+        1,865.65. Wembanyama nevertheless ranked fifth on ESPN and
+        fifth on Yahoo/FanDuel. Total fantasy production therefore
+        should be considered alongside playing time and per-minute
+        production rather than interpreted using one metric alone.
+      </p>
+
+      <p>
+        <b>Donovan Mitchell ranked differently by platform:</b>
+        Mitchell ranked tenth on ESPN and fourteenth on both
+        Yahoo/FanDuel and DraftKings. His average fantasy production
+        was 1.33 points per minute, based on the supplied
+        FP_PER_MIN field. This provides an example of how platform
+        rankings can differ even when the underlying player and
+        season remain the same.
+      </p>
+
+      <p>
+        <b>What this analysis demonstrates:</b>
+        SQL can combine aggregate functions, window functions,
+        conditional filtering, grouping, and sorting to compare
+        player performance across multiple scoring systems.
+        DENSE_RANK() makes it possible to generate independent
+        rankings within each season, while AVG(), SUM(), and
+        COUNT() provide context for interpreting those rankings.
+      </p>
+    </div>
+
+    <h3>Conclusion</h3>
+    <p>
+      The 2025–26 results show that fantasy basketball rankings
+      can be consistent for some players and differ considerably
+      for others depending on the scoring platform. Nikola Jokić
+      and Luka Dončić held the same positions across all three
+      systems, while Jalen Johnson ranked much higher on
+      Yahoo/FanDuel and DraftKings than on ESPN.
+    </p>
+
+    <p>
+      This analysis demonstrates how SQL can be used to evaluate
+      fantasy production, compare ranking systems, and examine
+      player performance alongside playing time. A useful next
+      step would be to expand the analysis across multiple seasons
+      or compare platform-specific rankings with per-game and
+      per-minute production.
+    </p>
+  </div>
+</details>
+
+
+
 <!-- ENTRY: Oct 16, Average NBA Opening Games and Team Performance -->
 <details class="entry" data-tool="SQL" id="nba-opening-game-averages">
   <summary>
