@@ -175,6 +175,272 @@ ORDER BY order_count DESC;</code></pre>
       </div>
     </details> -->
 
+	
+<!-- ENTRY: Oct 29, NBA Defensive Rankings -->
+<details class="entry" data-tool="SQL" id="nba-defensive-rankings">
+
+  <summary>
+    <div class="meta">
+      <time datetime="2026-10-29">Oct 29, 2026</time>
+      <span class="pill">SQL</span>
+    </div>
+    <h2>Which NBA Teams Have the Best Defenses?</h2>
+    <p class="teaser">
+      Using SQL CTEs, aggregations, self-joins, and window functions
+      to rank all 30 NBA teams by average opponent points allowed per game.
+    </p>
+    <span class="chev" aria-hidden="true"></span>
+  </summary>
+
+  <div class="entry-body">
+
+    <h3>The question</h3>
+
+    <p>
+      Which NBA teams have the strongest defenses based on how many
+      points they allow their opponents to score per game?
+      I wanted to compare all 30 teams using opponent scoring to
+      identify which teams consistently limit their opponents'
+      offensive production.
+    </p>
+
+    <p>
+      Rather than evaluating individual player statistics, this
+      analysis focuses on team-level performance. By aggregating
+      player statistics into individual team game totals, I could
+      compare each team's defensive performance across the league.
+    </p>
+
+    <h3>The approach</h3>
+
+    <p>
+      I started by creating a Common Table Expression (CTE) called
+      <code>game_sums</code>. This allowed me to aggregate individual
+      player game logs into team-level statistics for each game.
+      I used SUM() to calculate total points, three-pointers made,
+      rebounds, assists, steals, and blocks.
+    </p>
+
+    <p>
+      I also included a CASE statement to identify whether each
+      team played at home or away based on its matchup. Grouping
+      by GAME_ID, TEAM_NAME, and LOCATION ensured that each team
+      had one aggregated record per game.
+    </p>
+
+    <p>
+      Next, I used a self-join to connect each team with its
+      opponent from the same game. By matching GAME_ID and
+      excluding records where both team names were identical,
+      I could associate each team's game with the opposing
+      team's total points.
+    </p>
+
+    <p>
+      Finally, I calculated the average opponent points allowed
+      using AVG() and applied the RANK() window function to
+      assign defensive rankings. Teams allowing fewer points
+      received better rankings.
+    </p>
+
+    <h3>SQL query</h3>
+
+    <pre><code>WITH game_sums AS (
+    SELECT
+        GAME_ID,
+        TEAM_NAME,
+        CASE
+            WHEN MATCHUP LIKE '% vs. %' THEN 'HOME'
+            ELSE 'AWAY'
+        END AS LOCATION,
+        SUM(PTS) AS PTS,
+        SUM(FG3M) AS FG3M,
+        SUM(REB) AS REB,
+        SUM(AST) AS AST,
+        SUM(STL) AS STL,
+        SUM(BLK) AS BLK
+    FROM team_game_logs
+    GROUP BY
+        GAME_ID,
+        TEAM_NAME,
+        CASE
+            WHEN MATCHUP LIKE '% vs. %' THEN 'HOME'
+            ELSE 'AWAY'
+        END
+)
+
+SELECT
+    g1.TEAM_NAME,
+    ROUND(AVG(g2.PTS), 2) AS avg_pts_against,
+    RANK() OVER (
+        ORDER BY AVG(g2.PTS) ASC
+    ) AS def_rank
+FROM game_sums g1
+JOIN game_sums g2
+    ON g1.GAME_ID = g2.GAME_ID
+    AND g1.TEAM_NAME &lt;&gt; g2.TEAM_NAME
+GROUP BY
+    g1.TEAM_NAME
+ORDER BY
+    def_rank ASC;</code></pre>
+
+    <h3>Key SQL concepts</h3>
+
+    <ul>
+      <li>
+        <strong>Common Table Expressions (CTEs):</strong>
+        Created an organized intermediate dataset to simplify
+        the aggregation and joining process.
+      </li>
+      <li>
+        <strong>CASE statements:</strong>
+        Classified each team's game location as home or away.
+      </li>
+      <li>
+        <strong>SUM() and GROUP BY:</strong>
+        Aggregated individual player statistics into team-level
+        game totals.
+      </li>
+      <li>
+        <strong>Self-joins:</strong>
+        Matched opposing teams using GAME_ID to identify
+        opponent scoring.
+      </li>
+      <li>
+        <strong>AVG():</strong>
+        Calculated the average points scored by opponents
+        against each team.
+      </li>
+      <li>
+        <strong>Window functions:</strong>
+        Used RANK() to assign defensive rankings based on
+        average opponent points allowed.
+      </li>
+    </ul>
+
+    <h3>The results: NBA defensive rankings</h3>
+
+    <p>
+      The final query produced a ranking of all 30 NBA teams
+      based on average opponent points allowed per game.
+      Teams allowing fewer points received a better defensive
+      ranking, with the Toronto Raptors finishing first.
+    </p>
+
+    <div class="result">
+      <table>
+        <tr>
+          <th>Team</th>
+          <th class="num">Avg. Points Allowed</th>
+          <th class="num">Rank</th>
+        </tr>
+        <tr><td>Toronto Raptors</td><td class="num">102.50</td><td class="num">1</td></tr>
+        <tr><td>Detroit Pistons</td><td class="num">103.40</td><td class="num">2</td></tr>
+        <tr><td>Oklahoma City Thunder</td><td class="num">104.00</td><td class="num">3</td></tr>
+        <tr><td>Memphis Grizzlies</td><td class="num">107.00</td><td class="num">4</td></tr>
+        <tr><td>Philadelphia 76ers</td><td class="num">107.40</td><td class="num">5</td></tr>
+        <tr><td>Minnesota Timberwolves</td><td class="num">107.80</td><td class="num">6</td></tr>
+        <tr><td>LA Clippers</td><td class="num">108.00</td><td class="num">7</td></tr>
+        <tr><td>Charlotte Hornets</td><td class="num">108.20</td><td class="num">8</td></tr>
+        <tr><td>Houston Rockets</td><td class="num">108.80</td><td class="num">9</td></tr>
+        <tr><td>New York Knicks</td><td class="num">109.60</td><td class="num">10</td></tr>
+        <tr><td>San Antonio Spurs</td><td class="num">110.00</td><td class="num">11</td></tr>
+        <tr><td>Portland Trail Blazers</td><td class="num">110.67</td><td class="num">12</td></tr>
+        <tr><td>Boston Celtics</td><td class="num">111.75</td><td class="num">13</td></tr>
+        <tr><td>Dallas Mavericks</td><td class="num">112.00</td><td class="num">14</td></tr>
+        <tr><td>Los Angeles Lakers</td><td class="num">113.60</td><td class="num">15</td></tr>
+        <tr><td>Denver Nuggets</td><td class="num">114.00</td><td class="num">16</td></tr>
+        <tr><td>Indiana Pacers</td><td class="num">114.80</td><td class="num">17</td></tr>
+        <tr><td>Atlanta Hawks</td><td class="num">115.20</td><td class="num">18</td></tr>
+        <tr><td>Washington Wizards</td><td class="num">115.80</td><td class="num">19</td></tr>
+        <tr><td>Cleveland Cavaliers</td><td class="num">117.75</td><td class="num">20</td></tr>
+        <tr><td>Golden State Warriors</td><td class="num">119.40</td><td class="num">21</td></tr>
+        <tr><td>Orlando Magic</td><td class="num">119.50</td><td class="num">22</td></tr>
+        <tr><td>Utah Jazz</td><td class="num">120.20</td><td class="num">23</td></tr>
+        <tr><td>Miami Heat</td><td class="num">120.80</td><td class="num">24</td></tr>
+        <tr><td>New Orleans Pelicans</td><td class="num">122.00</td><td class="num">25</td></tr>
+        <tr><td>Phoenix Suns</td><td class="num">123.67</td><td class="num">26</td></tr>
+        <tr><td>Brooklyn Nets</td><td class="num">124.00</td><td class="num">27</td></tr>
+        <tr><td>Milwaukee Bucks</td><td class="num">124.20</td><td class="num">28</td></tr>
+        <tr><td>Sacramento Kings</td><td class="num">125.50</td><td class="num">29</td></tr>
+        <tr><td>Chicago Bulls</td><td class="num">130.20</td><td class="num">30</td></tr>
+      </table>
+    </div>
+
+    <h3>Key findings</h3>
+
+    <div class="takeaway">
+
+      <p>
+        <strong>Toronto leads the league:</strong>
+        The Raptors ranked first, allowing an average of
+        102.50 points per game. Detroit (103.40) and
+        Oklahoma City (104.00) rounded out the top three.
+      </p>
+
+      <p>
+        <strong>Oklahoma City ranks among the best:</strong>
+        The Thunder finished third at 104.00 points allowed
+        per game, placing them among the strongest defenses
+        in this analysis.
+      </p>
+
+      <p>
+        <strong>Cleveland sits in the middle:</strong>
+        The Cavaliers ranked 20th, allowing 117.75 points
+        per game. This creates an opportunity to investigate
+        how Cleveland's defensive performance compares
+        across different opponents and game situations.
+      </p>
+
+      <p>
+        <strong>A significant gap between the top and bottom:</strong>
+        Toronto allowed 27.70 fewer points per game than
+        Chicago, which ranked last at 130.20 points allowed.
+      </p>
+
+      <p>
+        <strong>Defensive rankings provide a different perspective:</strong>
+        Looking at opponent scoring offers a team-level
+        comparison that is different from evaluating
+        individual defensive statistics such as steals,
+        blocks, and rebounds.
+      </p>
+
+    </div>
+
+    <h3>Conclusion</h3>
+
+    <p>
+      This analysis demonstrates how SQL can transform
+      individual player game logs into meaningful team-level
+      performance metrics. By combining CTEs, aggregate
+      functions, self-joins, and window functions, I was
+      able to build a league-wide ranking system based on
+      opponent scoring.
+    </p>
+
+    <p>
+      The results identified Toronto, Detroit, and Oklahoma
+      City as the top three teams in this comparison, while
+      Chicago ranked last. Cleveland finished 20th,
+      providing another point of comparison for future
+      Cavaliers-focused analysis.
+    </p>
+
+    <p>
+      A potential next step would be to break down opponent
+      points allowed by home and away games to determine
+      whether defensive performance changes depending
+      on location. I could also expand the analysis to
+      include opponent field goal percentage, three-point
+      percentage, and points allowed per 100 possessions
+      for a more complete evaluation of defensive efficiency.
+    </p>
+
+  </div>
+</details>
+
 <!-- ENTRY: Oct 21, Fantasy Basketball Assist Efficiency and Sleeper Picks -->
 <details class="entry" data-tool="SQL" id="fantasy-basketball-assist-sleeper-picks">
   <summary>
