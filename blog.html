@@ -175,6 +175,227 @@ ORDER BY order_count DESC;</code></pre>
       </div>
     </details> -->
 
+<!-- ENTRY: Nov 9, SQL NULL Handling -->
+<details class="entry" data-tool="SQL" id="sql-null-handling">
+
+  <summary>
+    <div class="meta">
+      <time datetime="2026-11-09">Nov 9, 2026</time>
+      <span class="pill">SQL</span>
+    </div>
+    <h2>Handling Missing Data in SQL: NULL Values and COALESCE()</h2>
+    <p class="teaser">
+      Exploring SQL NULL handling using COALESCE(), IS NOT NULL,
+      Common Table Expressions, and aggregate functions to
+      clean employee records and calculate department salary averages.
+    </p>
+    <span class="chev" aria-hidden="true"></span>
+  </summary>
+
+  <div class="entry-body">
+
+    <h3>The question</h3>
+
+    <p>
+      How can SQL handle missing information in a dataset while
+      still allowing accurate calculations and meaningful results?
+      I created a sample employee database containing missing
+      salaries, departments, job titles, and hire dates to practice
+      identifying and handling NULL values.
+    </p>
+
+    <p>
+      Missing data is common in real-world datasets. Rather than
+      automatically removing every record containing missing
+      information, I wanted to explore how SQL can replace
+      missing values when appropriate and exclude incomplete
+      records when necessary.
+    </p>
+
+    <h3>The approach</h3>
+
+    <p>
+      I started by creating an Employees table containing
+      employee information such as department, job title,
+      salary, and hire date. I intentionally included NULL
+      values across several columns to simulate an incomplete
+      dataset.
+    </p>
+
+    <p>
+      Next, I created a Common Table Expression (CTE) called
+      <code>updated_table</code>. Within the CTE, I used
+      <code>COALESCE()</code> to replace missing department
+      values with 'Unassigned' and missing job titles with
+      'Unknown'.
+    </p>
+
+    <p>
+      I also used <code>IS NOT NULL</code> to filter out
+      employees without salary information. This ensured
+      that the salary averages were calculated using only
+      employees with recorded salaries.
+    </p>
+
+    <p>
+      Finally, I grouped the results by department and
+      used <code>AVG()</code> to calculate the average
+      salary for each department.
+    </p>
+
+    <h3>SQL query</h3>
+
+    <pre><code>WITH updated_table AS (
+    SELECT
+        employee_id,
+        first_name,
+        last_name,
+        COALESCE(department, 'Unassigned') AS department,
+        COALESCE(job_title, 'Unknown') AS job_title,
+        salary
+    FROM Employees
+    WHERE salary IS NOT NULL
+)
+
+SELECT
+    department,
+    AVG(salary) AS avg_salary
+FROM updated_table
+GROUP BY department
+ORDER BY department;</code></pre>
+
+    <h3>Key SQL concepts</h3>
+
+    <ul>
+      <li>
+        <strong>NULL values:</strong>
+        Represent missing or unknown information within
+        a database. NULL is different from zero or an
+        empty string.
+      </li>
+      <li>
+        <strong>COALESCE():</strong>
+        Replaced NULL department values with 'Unassigned'
+        and missing job titles with 'Unknown'.
+      </li>
+      <li>
+        <strong>IS NOT NULL:</strong>
+        Filtered out employees without recorded salaries
+        before performing calculations.
+      </li>
+      <li>
+        <strong>Common Table Expressions (CTEs):</strong>
+        Created an intermediate dataset to organize
+        the NULL-handling process before aggregation.
+      </li>
+      <li>
+        <strong>AVG():</strong>
+        Calculated department salary averages.
+        SQL automatically ignores NULL values when
+        calculating averages.
+      </li>
+      <li>
+        <strong>GROUP BY:</strong>
+        Organized employees by department to calculate
+        individual department averages.
+      </li>
+    </ul>
+
+    <h3>The results: Average salary by department</h3>
+
+    <p>
+      After handling missing department values and filtering
+      out employees without salary information, the query
+      returned the average salary for each department.
+      Employees without a department were grouped under
+      'Unassigned' rather than being excluded.
+    </p>
+
+    <div class="result">
+      <table>
+        <tr>
+          <th>Department</th>
+          <th class="num">Average Salary</th>
+        </tr>
+        <tr>
+          <td>HR</td>
+          <td class="num">$57,000.00</td>
+        </tr>
+        <tr>
+          <td>IT</td>
+          <td class="num">$75,000.00</td>
+        </tr>
+        <tr>
+          <td>Marketing</td>
+          <td class="num">$75,500.00</td>
+        </tr>
+        <tr>
+          <td>Sales</td>
+          <td class="num">$52,000.00</td>
+        </tr>
+        <tr>
+          <td>Unassigned</td>
+          <td class="num">$88,000.00</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Key findings</h3>
+
+    <div class="takeaway">
+
+      <p>
+        <strong>Missing departments can be retained:</strong>
+        Using COALESCE(), employees without an assigned
+        department were grouped under 'Unassigned' instead
+        of being lost during aggregation.
+      </p>
+
+      <p>
+        <strong>Missing salaries were excluded:</strong>
+        The IS NOT NULL condition ensured that employees
+        without salary information were not included
+        in the department averages.
+      </p>
+
+      <p>
+        <strong>NULL does not automatically mean zero:</strong>
+        Replacing missing salaries with zero would change
+        the calculated averages. In this example, employees
+        without recorded salaries were excluded instead.
+      </p>
+
+      <p>
+        <strong>AVG() handles NULL values automatically:</strong>
+        SQL ignores NULL values when calculating averages.
+        The explicit salary filter also makes the intended
+        dataset easier to understand.
+      </p>
+
+    </div>
+
+    <h3>Conclusion</h3>
+
+    <p>
+      This exercise demonstrates how SQL can handle missing
+      information without unnecessarily removing useful
+      records. By combining COALESCE(), IS NOT NULL,
+      CTEs, and aggregate functions, I was able to clean
+      department classifications and calculate salary
+      averages using valid records.
+    </p>
+
+    <p>
+      Understanding how NULL values affect filtering,
+      grouping, and calculations is an important part
+      of working with real-world datasets. These techniques
+      provide a foundation for more advanced data cleaning
+      and preparation tasks.
+    </p>
+
+  </div>
+</details>
+
 	
 <!-- ENTRY: Oct 29, NBA Defensive Rankings -->
 <details class="entry" data-tool="SQL" id="nba-defensive-rankings">
