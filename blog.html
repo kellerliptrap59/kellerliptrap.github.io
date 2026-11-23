@@ -175,6 +175,223 @@ ORDER BY order_count DESC;</code></pre>
       </div>
     </details> -->
 
+
+	  ```html
+<!-- ENTRY: Nov 23, SQL Window Functions -->
+<details class="entry" data-tool="SQL" id="nba-last-five-games">
+
+  <summary>
+    <div class="meta">
+      <time datetime="2026-11-23">Nov 23, 2026</time>
+      <span class="pill">SQL</span>
+    </div>
+    <h2>NBA Player Scoring Trends: Comparing Last Five Games to Season Averages</h2>
+    <p class="teaser">
+      Using SQL Common Table Expressions, window functions, and conditional
+      aggregation to identify NBA players who are scoring above or below
+      their season averages over their most recent five games.
+    </p>
+    <span class="chev" aria-hidden="true"></span>
+  </summary>
+
+  <div class="entry-body">
+
+    <h3>The question</h3>
+
+    <p>
+      Which NBA players are currently scoring above or below their
+      season averages, and how do their performances over their
+      last five games compare to their overall production?
+    </p>
+
+    <p>
+      Season averages provide a useful baseline for evaluating
+      player performance, but they do not always reflect recent
+      trends. A player averaging 20 points per game for the season
+      could be experiencing a scoring increase or decrease over
+      their most recent games.
+    </p>
+
+    <p>
+      I wanted to use SQL to identify these changes by comparing
+      each player's average points over their last five games
+      against their overall season scoring average.
+    </p>
+
+    <h3>The approach</h3>
+
+    <p>
+      I started by creating a Common Table Expression (CTE)
+      called <code>game_recency</code>. Within the CTE, I used
+      <code>ROW_NUMBER()</code> as a window function to assign
+      each player's games a ranking based on game date, ordered
+      from most recent to oldest.
+    </p>
+
+    <p>
+      By partitioning the window function by
+      <code>PLAYER_NAME</code>, each player's game history
+      was ranked independently. This allowed me to identify
+      the five most recent games for every player.
+    </p>
+
+    <p>
+      Next, I used conditional aggregation with
+      <code>AVG()</code> and <code>CASE WHEN</code> to calculate
+      each player's average points over their last five games.
+      I also calculated their overall season scoring average.
+    </p>
+
+    <p>
+      I then subtracted the season average from the last-five-game
+      average to calculate the difference. Positive values
+      indicate players scoring above their season averages,
+      while negative values indicate players scoring below
+      their season averages.
+    </p>
+
+    <p>
+      Finally, I used <code>HAVING COUNT(*) >= 5</code> to
+      exclude players with fewer than five games played and
+      ordered the results by the difference in descending order.
+    </p>
+
+    <h3>SQL query</h3>
+
+    <pre><code>WITH game_recency AS (
+    SELECT
+        *,
+        ROW_NUMBER() OVER (
+            PARTITION BY PLAYER_NAME
+            ORDER BY GAME_DATE DESC
+        ) AS game_recency
+    FROM `26-27_season`
+)
+
+SELECT
+    PLAYER_NAME,
+
+    ROUND(
+        AVG(CASE
+            WHEN game_recency <= 5 THEN PTS
+        END), 2
+    ) AS last_5_games,
+
+    ROUND(AVG(PTS), 2) AS season_avg,
+
+    ROUND(
+        AVG(CASE
+            WHEN game_recency <= 5 THEN PTS
+        END) - AVG(PTS), 1
+    ) AS difference,
+
+    COUNT(*) AS games_played
+
+FROM game_recency
+GROUP BY PLAYER_NAME
+HAVING COUNT(*) >= 5
+ORDER BY difference DESC;</code></pre>
+
+
+    <h3>The results: Recent scoring performance</h3>
+
+    <p>
+      The query returned each qualifying player's average
+      points over their last five games, their overall
+      season scoring average, and the difference between
+      the two.
+    </p>
+
+    <p>
+      The results below are ordered by the largest positive
+      difference, highlighting players who have experienced
+      the biggest increases in scoring production over
+      their most recent five games.
+    </p>
+
+    <div class="result">
+      <table>
+        <tr>
+          <th>Player</th>
+          <th class="num">Last 5 Games</th>
+          <th class="num">Season Avg.</th>
+          <th class="num">Difference</th>
+          <th class="num">Games Played</th>
+        </tr>
+        <tr><td>Quentin Grimes</td><td class="num">22.80</td><td class="num">12.67</td><td class="num">+10.1</td><td class="num">15</td></tr>
+        <tr><td>Svi Mykhailiuk</td><td class="num">15.80</td><td class="num">6.78</td><td class="num">+9.0</td><td class="num">18</td></tr>
+        <tr><td>Brice Sensabaugh</td><td class="num">18.00</td><td class="num">10.78</td><td class="num">+7.2</td><td class="num">18</td></tr>
+        <tr><td>James Harden</td><td class="num">25.20</td><td class="num">18.38</td><td class="num">+6.8</td><td class="num">16</td></tr>
+        <tr><td>Buddy Hield</td><td class="num">16.20</td><td class="num">9.86</td><td class="num">+6.3</td><td class="num">14</td></tr>
+        <tr><td>Ryan Conwell</td><td class="num">13.20</td><td class="num">7.43</td><td class="num">+5.8</td><td class="num">14</td></tr>
+        <tr><td>Tyrese Proctor</td><td class="num">15.20</td><td class="num">9.44</td><td class="num">+5.8</td><td class="num">16</td></tr>
+        <tr><td>Cedric Coward</td><td class="num">20.60</td><td class="num">15.31</td><td class="num">+5.3</td><td class="num">16</td></tr>
+        <tr><td>Collin Gillespie</td><td class="num">14.80</td><td class="num">9.73</td><td class="num">+5.1</td><td class="num">15</td></tr>
+        <tr><td>Landry Shamet</td><td class="num">16.40</td><td class="num">11.35</td><td class="num">+5.0</td><td class="num">17</td></tr>
+        <tr><td>Kasparas Jakučionis</td><td class="num">13.80</td><td class="num">9.00</td><td class="num">+4.8</td><td class="num">16</td></tr>
+        <tr><td>Jalen Smith</td><td class="num">19.00</td><td class="num">14.29</td><td class="num">+4.7</td><td class="num">14</td></tr>
+        <tr><td>Shai Gilgeous-Alexander</td><td class="num">36.40</td><td class="num">31.69</td><td class="num">+4.7</td><td class="num">16</td></tr>
+        <tr><td>Joel Embiid</td><td class="num">25.00</td><td class="num">20.43</td><td class="num">+4.6</td><td class="num">14</td></tr>
+        <tr><td>Taylor Hendricks</td><td class="num">13.00</td><td class="num">8.42</td><td class="num">+4.6</td><td class="num">12</td></tr>
+        <tr><td>Stephon Castle</td><td class="num">20.40</td><td class="num">15.88</td><td class="num">+4.5</td><td class="num">17</td></tr>
+        <tr><td>Kelly Oubre Jr.</td><td class="num">16.20</td><td class="num">11.80</td><td class="num">+4.4</td><td class="num">15</td></tr>
+        <tr><td>Brook Lopez</td><td class="num">20.00</td><td class="num">15.73</td><td class="num">+4.3</td><td class="num">15</td></tr>
+        <tr><td>Christian Anderson</td><td class="num">9.40</td><td class="num">5.14</td><td class="num">+4.3</td><td class="num">14</td></tr>
+        <tr><td>Jordan Poole</td><td class="num">15.60</td><td class="num">11.33</td><td class="num">+4.3</td><td class="num">12</td></tr>
+        <tr><td>Matas Buzelis</td><td class="num">19.20</td><td class="num">15.13</td><td class="num">+4.1</td><td class="num">16</td></tr>
+        <tr><td>Terrence Shannon Jr.</td><td class="num">17.00</td><td class="num">12.86</td><td class="num">+4.1</td><td class="num">14</td></tr>
+        <tr><td>Will Richard</td><td class="num">11.20</td><td class="num">7.25</td><td class="num">+4.0</td><td class="num">16</td></tr>
+      </table>
+    </div>
+
+    <h3>Key findings</h3>
+
+    <div class="takeaway">
+
+      <p>
+        <strong>Quentin Grimes led the group in recent scoring improvement:</strong>
+        Grimes averaged 22.80 points over his last five games
+        compared to his season average of 12.67, representing
+        a 10.1-point increase.
+      </p>
+
+      <p>
+        <strong>Svi Mykhailiuk showed the second-largest increase:</strong>
+        Mykhailiuk averaged 15.80 points over his last five games,
+        compared to 6.78 for the season, a 9.0-point increase.
+      </p>
+
+      <p>
+        <strong>Brice Sensabaugh rounded out the top three:</strong>
+        Sensabaugh averaged 18.00 points over his last five games,
+        which was 7.2 points above his season average of 10.78.
+      </p>
+
+      <p>
+        <strong>Established scorers also showed improvement:</strong>
+        James Harden averaged 25.20 points over his last five games,
+        exceeding his season average by 6.8 points. Shai Gilgeous-Alexander
+        averaged 36.40 points, 4.7 points above his season average.
+      </p>
+
+      <p>
+        <strong>Recent scoring increases were widespread:</strong>
+        All 22 players in the results averaged more points over
+        their last five games than their overall season averages.
+      </p>
+
+      <p>
+        <strong>Recent performance can reveal trends that season averages hide:</strong>
+        Comparing shorter performance windows against season-long
+        averages provides another way to evaluate player production
+        and identify changes in scoring output.
+      </p>
+
+    </div>
+
+  </div>
+</details>
+	  
 <!-- ENTRY: Nov 9, SQL NULL Handling -->
 <details class="entry" data-tool="SQL" id="sql-null-handling">
 
