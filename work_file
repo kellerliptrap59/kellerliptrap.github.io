@@ -87,3 +87,21 @@ select nameI, avg_points, avg_assists, avg_rebounds
 from cavs_stat_ranks
 where avg_points_rank <= 5 and avg_assist_rank <=5 and avg_reb_rank <=5
 ```
+
+
+
+```hot
+with game_recency as(
+select *, row_number () over(partition by PLAYER_NAME order by GAME_DATE desc) as game_recency
+from `26-27_season`
+)
+select PLAYER_NAME, 
+round(avg(case when game_recency <=5 then pts end),2) as last_5_games,
+round(avg(pts),2) as season_avg,
+round(avg(case when game_recency <=5 then pts end) - avg(pts),1 ) as difference,
+count(*) as games_played
+from game_recency
+group by PLAYER_NAME
+having count(*) >= 5
+order by difference desc
+```
